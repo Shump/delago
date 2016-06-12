@@ -1,2 +1,2 @@
 all:
-	elm make src/Digits.elm --output build/Digits.js
+	elm make src/Main.elm --output build/index.html
