@@ -1,4 +1,4 @@
-module SvgDefs exposing
+module View.SvgDefs exposing
   ( viewBox_
   , x_, y_
   , width_, height_
@@ -101,7 +101,10 @@ supportPositions size =
       ]
     _ -> []
 
+lineColor : String
 lineColor = "black"
+
+boardColor : String
 boardColor = "orange"
 
 boardSymbol : Int -> Svg msg
