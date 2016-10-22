@@ -10,7 +10,7 @@ import Svg exposing (Svg, svg, use)
 import Svg.Events as Events
 import Svg.Attributes exposing (xlinkHref, x, y, width, height)
 
-import Model exposing
+import Model.Game exposing
   ( Game
   , Pos
   , Point(Empty, Occupied)
@@ -72,7 +72,7 @@ tile callbacks game ((x, y), point) =
       , Events.onMouseOver <| callbacks.onEnter pos_
       ] []
 
-tiles : Callbacks msg -> Model.Game -> List (Svg msg)
+tiles : Callbacks msg -> Model.Game.Game -> List (Svg msg)
 tiles callbacks game =
   let
     tile_ = tile callbacks game
@@ -89,7 +89,7 @@ board callbacks size =
     ]
       []
 
-renderBoard : Callbacks msg -> Model.Game -> Html.Html msg
+renderBoard : Callbacks msg -> Model.Game.Game -> Html.Html msg
 renderBoard callbacks game =
   let
     attributes =

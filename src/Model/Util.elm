@@ -1,6 +1,6 @@
 module Model.Util exposing (..)
 
-import Model exposing (..)
+import Model.Game exposing (..)
 
 flipStone : Stone -> Stone
 flipStone stone =

@@ -5,7 +5,7 @@ import Html.App exposing (beginnerProgram)
 
 import View
 import View.Shared exposing (Callbacks)
-import Model
+import Model.Game
 import Update
 import Msg
 
