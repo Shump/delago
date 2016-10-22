@@ -17,6 +17,8 @@ import Model.Game exposing
   , Stone(Black, White)
   )
 
+import Msg.Game
+
 import View.SvgDefs exposing
   ( viewBox_
   , x_, y_
@@ -26,8 +28,6 @@ import View.SvgDefs exposing
   , whiteTileSymbol, whiteId
   , boardSymbol
   )
-
-import View.Shared exposing (Callbacks)
 
 stoneId : Stone -> String
 stoneId stone =
@@ -41,8 +41,8 @@ pointId point =
     Empty -> emptyId
     Occupied stone -> stoneId stone
 
-tile : Callbacks msg -> Game -> ((Int, Int), Point) -> Svg msg
-tile callbacks game ((x, y), point) =
+tile : Game -> ((Int, Int), Point) -> Svg Msg.Game.Msg
+tile game ((x, y), point) =
   let
     pos_ = { x = x, y = y }
 
@@ -68,29 +68,29 @@ tile callbacks game ((x, y), point) =
       [ x_ x , y_ y
       , width_ 1 , height_ 1
       , xlinkHref <| Maybe.withDefault emptyId sym
-      , Events.onClick <| callbacks.onClick pos_
-      , Events.onMouseOver <| callbacks.onEnter pos_
+      , Events.onClick <| Msg.Game.OnClick pos_
+      , Events.onMouseOver <| Msg.Game.OnEnter pos_
       ] []
 
-tiles : Callbacks msg -> Model.Game.Game -> List (Svg msg)
-tiles callbacks game =
+tiles : Model.Game.Game -> List (Svg Msg.Game.Msg)
+tiles game =
   let
-    tile_ = tile callbacks game
+    tile_ = tile game
   in
     List.map tile_ <| Dict.toList game.board
 
-board : Callbacks msg -> Int -> Svg msg
-board callbacks size =
+board : Int -> Svg Msg.Game.Msg
+board size =
   use
     [ x_ 0, y_ 0
     , width_ size , width_ size
     , xlinkHref "#board"
-    , Events.onMouseOut <| callbacks.onLeave
+    , Events.onMouseOut <| Msg.Game.OnLeave
     ]
       []
 
-renderBoard : Callbacks msg -> Model.Game.Game -> Html.Html msg
-renderBoard callbacks game =
+renderBoard : Model.Game.Game -> Html.Html Msg.Game.Msg
+renderBoard game =
   let
     attributes =
       [ width_ 600 , height_ 600
@@ -102,8 +102,8 @@ renderBoard callbacks game =
       , emptyTileSymbol
       , blackTileSymbol
       , whiteTileSymbol
-      , board callbacks game.size
-      ] ++ tiles callbacks game
+      , board game.size
+      ] ++ tiles game
 
   in
     svg attributes subElems

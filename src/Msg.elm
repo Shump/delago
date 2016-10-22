@@ -1,8 +1,5 @@
 module Msg exposing (..)
 
-import Model.Game
+import Msg.Game
 
-type Msg
-  = OnEnter Model.Game.Pos
-  | OnLeave
-  | OnClick Model.Game.Pos
+type Msg = Start | Game Msg.Game.Msg
