@@ -2,4 +2,9 @@ module Msg exposing (..)
 
 import Msg.Game
 
-type Msg = Start | Game Msg.Game.Msg
+type Msg
+  = Start
+  | Size String
+  | Komi String
+  | Handicap String
+  | Game Msg.Game.Msg
