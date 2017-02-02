@@ -13,7 +13,7 @@ type Digits
 toString : String -> Digits -> String
 toString alpha digits =
     let
-        alpha' =
+        alpha_ =
             String.toList alpha
 
         base =
@@ -23,7 +23,7 @@ toString alpha digits =
             toBase base digits
 
         chars =
-            List.map (\d -> getAt d alpha') digs
+            List.map (\d -> getAt d alpha_) digs
     in
         Maybe.withDefault "" <| Maybe.map String.fromList <| combine chars
 
@@ -34,7 +34,7 @@ toInt (Digits base digs) =
         acc dig ( pow, val ) =
             ( pow + 1, val + (base ^ pow) * dig )
     in
-        snd <| List.foldr acc ( 0, 0 ) digs
+        Tuple.second <| List.foldr acc ( 0, 0 ) digs
 
 
 toBin : Digits -> String
@@ -47,8 +47,8 @@ toHex digits =
     toString "0123456789ABCDEF" <| toBase 16 digits
 
 
-toBase' : Int -> Int -> Digits
-toBase' base num =
+toBase_ : Int -> Int -> Digits
+toBase_ base num =
     let
         f n =
             case n of
@@ -56,14 +56,14 @@ toBase' base num =
                     Nothing
 
                 _ ->
-                    Just ( n `rem` base, n // base )
+                    Just ( rem n base, n // base )
     in
         Digits base <| List.reverse <| unfoldr f num
 
 
 toBase : Int -> Digits -> Digits
 toBase base digits =
-    toBase' base (toInt digits)
+    toBase_ base (toInt digits)
 
 
 fromString : String -> Int -> String -> Maybe Digits
@@ -91,7 +91,7 @@ fromString alphabet base string =
 
 fromInt : Int -> Digits
 fromInt num =
-    toBase' 10 num
+    toBase_ 10 num
 
 
 fromHex : String -> Maybe Digits

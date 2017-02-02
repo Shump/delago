@@ -51,7 +51,7 @@ newGame size komi handicap =
         emptyBoard size =
             let
                 positions =
-                    cartesianProduct [0..size - 1] [0..size - 1]
+                    cartesianProduct (List.range 0 (size - 1)) (List.range 0 (size - 1))
             in
                 Dict.fromList <| List.map (\pos -> ( pos, Empty )) positions
     in

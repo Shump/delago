@@ -1,13 +1,14 @@
 module Main exposing (..)
 
 import Platform exposing (Program)
-import Html.App exposing (beginnerProgram)
+import Html exposing (beginnerProgram)
 import View
 import Model
 import Update
+import Msg
 
 
-main : Program Never
+main : Program Never Model.App Msg.Msg
 main =
     beginnerProgram
         { model = Model.newApp

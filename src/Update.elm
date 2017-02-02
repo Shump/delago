@@ -31,7 +31,7 @@ doSize : Model.App -> String -> Model.App
 doSize app size =
     let
         validatedSize =
-            (S.toInt size) `R.andThen` validateSize
+            (S.toInt size) |> R.andThen validateSize
     in
         case validatedSize of
             Ok size_ ->
@@ -47,7 +47,7 @@ doKomi : Model.App -> String -> Model.App
 doKomi app komi =
     let
         validated =
-            (S.toFloat komi) `R.andThen` validateKomi
+            (S.toFloat komi) |> R.andThen validateKomi
     in
         case validated of
             Ok komi_ ->
@@ -63,7 +63,7 @@ doHandicap : Model.App -> String -> Model.App
 doHandicap app handicap =
     let
         validated =
-            (S.toInt handicap) `R.andThen` validateHandicap
+            (S.toInt handicap) |> R.andThen validateHandicap
     in
         case validated of
             Ok handicap_ ->

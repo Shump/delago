@@ -7,12 +7,14 @@ import List.Extra exposing (andThen)
 cartesianProduct : List a -> List b -> List ( a, b )
 cartesianProduct xs ys =
     xs
-        `andThen`
-            \x ->
+        |> andThen
+            (\x ->
                 ys
-                    `andThen`
-                        \y ->
+                    |> andThen
+                        (\y ->
                             [ ( x, y ) ]
+                        )
+            )
 
 
 

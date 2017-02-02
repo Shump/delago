@@ -209,6 +209,6 @@ boardSymbol size =
                 ]
                 []
             ]
-                ++ List.map vline [0..size - 3]
-                ++ List.map hline [0..size - 3]
+                ++ List.map vline (List.range 0 (size - 3))
+                ++ List.map hline (List.range 0 (size - 3))
                 ++ List.map supportPos (supportPositions size)

@@ -5,7 +5,7 @@ import String as S
 import Maybe
 import Maybe.Extra exposing (maybeToList)
 import Html exposing (div, span, text, input, button)
-import Html.App exposing (map)
+import Html exposing (map)
 import Html.Events exposing (onClick, onInput)
 import Model
 import Msg
