@@ -1,4 +1,4 @@
-module View.Board exposing (renderBoard)
+module Game.View exposing (renderBoard)
 
 import Html
 import Maybe exposing (map)

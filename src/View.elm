@@ -9,7 +9,7 @@ import Html exposing (map)
 import Html.Events exposing (onClick, onInput)
 import Model
 import Msg
-import View.Board exposing (renderBoard)
+import Game.View exposing (renderBoard)
 
 
 render : Model.App -> Html.Html Msg.Msg
