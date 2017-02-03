@@ -13,7 +13,7 @@ import Model
         , validateHandicap
         )
 import Game.Model
-import Update.Game as G
+import Game.Update as G
 import Msg
 
 

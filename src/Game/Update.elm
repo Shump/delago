@@ -1,4 +1,4 @@
-module Update.Game exposing (update)
+module Game.Update exposing (update)
 
 import Dict
 import Game.Model exposing (Game, Pos, Point(Empty, Occupied), putPoint)
