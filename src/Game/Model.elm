@@ -1,4 +1,4 @@
-module Model.Game exposing (..)
+module Game.Model exposing (..)
 
 import Dict
 import List

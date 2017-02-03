@@ -1,7 +1,7 @@
 module Update.Game exposing (update)
 
 import Dict
-import Model.Game exposing (Game, Pos, Point(Empty, Occupied), putPoint)
+import Game.Model exposing (Game, Pos, Point(Empty, Occupied), putPoint)
 import Model.Util exposing (flipStone)
 import Msg.Game
 

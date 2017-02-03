@@ -12,7 +12,7 @@ import Model
         , validateKomi
         , validateHandicap
         )
-import Model.Game
+import Game.Model
 import Update.Game as G
 import Msg
 
@@ -21,7 +21,7 @@ doStart : Model.App -> Model.App
 doStart app =
     case app of
         Model.NewGame setup ->
-            Model.Game <| Model.Game.newGame (Maybe.withDefault 19 setup.size) 0 0
+            Model.Game <| Game.Model.newGame (Maybe.withDefault 19 setup.size) 0 0
 
         Model.Game _ ->
             app

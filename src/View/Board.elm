@@ -8,7 +8,7 @@ import List
 import Svg exposing (Svg, svg, use)
 import Svg.Events as Events
 import Svg.Attributes exposing (xlinkHref, x, y, width, height)
-import Model.Game
+import Game.Model
     exposing
         ( Game
         , Pos
@@ -92,7 +92,7 @@ tile game ( ( x, y ), point ) =
             []
 
 
-tiles : Model.Game.Game -> List (Svg Msg.Game.Msg)
+tiles : Game.Model.Game -> List (Svg Msg.Game.Msg)
 tiles game =
     let
         tile_ =
@@ -114,7 +114,7 @@ board size =
         []
 
 
-renderBoard : Model.Game.Game -> Html.Html Msg.Game.Msg
+renderBoard : Game.Model.Game -> Html.Html Msg.Game.Msg
 renderBoard game =
     let
         attributes =

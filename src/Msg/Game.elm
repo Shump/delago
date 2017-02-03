@@ -1,9 +1,9 @@
 module Msg.Game exposing (..)
 
-import Model.Game
+import Game.Model
 
 
 type Msg
-    = OnEnter Model.Game.Pos
+    = OnEnter Game.Model.Pos
     | OnLeave
-    | OnClick Model.Game.Pos
+    | OnClick Game.Model.Pos

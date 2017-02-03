@@ -2,7 +2,7 @@ module Model exposing (..)
 
 import Result exposing (Result)
 import Maybe exposing (Maybe)
-import Model.Game as M
+import Game.Model as M
 
 
 type alias Errors =
@@ -85,13 +85,4 @@ updateGame func app =
 
 newApp : App
 newApp =
-    NewGame
-        { size = Nothing
-        , komi = Nothing
-        , handicap = Nothing
-        , errors =
-            { size = Nothing
-            , komi = Nothing
-            , handicap = Nothing
-            }
-        }
+    Game <| M.newGame 19 0 0
