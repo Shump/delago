@@ -1,4 +1,4 @@
-module Model.Util exposing (..)
+module Game.Util exposing (..)
 
 import Game.Model exposing (..)
 
