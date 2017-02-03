@@ -1,4 +1,4 @@
-module View.SvgDefs
+module Game.SvgDefs
     exposing
         ( viewBox_
         , x_

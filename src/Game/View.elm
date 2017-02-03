@@ -16,7 +16,7 @@ import Game.Model
         , Stone(Black, White)
         )
 import Game.Msg
-import View.SvgDefs
+import Game.SvgDefs
     exposing
         ( viewBox_
         , x_
