@@ -1,6 +1,6 @@
 module Msg exposing (..)
 
-import Msg.Game
+import Game.Msg
 
 
 type Msg
@@ -8,4 +8,4 @@ type Msg
     | Size String
     | Komi String
     | Handicap String
-    | Game Msg.Game.Msg
+    | Game Game.Msg.Msg

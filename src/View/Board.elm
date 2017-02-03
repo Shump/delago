@@ -15,7 +15,7 @@ import Game.Model
         , Point(Empty, Occupied)
         , Stone(Black, White)
         )
-import Msg.Game
+import Game.Msg
 import View.SvgDefs
     exposing
         ( viewBox_
@@ -53,7 +53,7 @@ pointId point =
             stoneId stone
 
 
-tile : Game -> ( ( Int, Int ), Point ) -> Svg Msg.Game.Msg
+tile : Game -> ( ( Int, Int ), Point ) -> Svg Game.Msg.Msg
 tile game ( ( x, y ), point ) =
     let
         pos_ =
@@ -86,13 +86,13 @@ tile game ( ( x, y ), point ) =
             , width_ 1
             , height_ 1
             , xlinkHref <| Maybe.withDefault emptyId sym
-            , Events.onClick <| Msg.Game.OnClick pos_
-            , Events.onMouseOver <| Msg.Game.OnEnter pos_
+            , Events.onClick <| Game.Msg.OnClick pos_
+            , Events.onMouseOver <| Game.Msg.OnEnter pos_
             ]
             []
 
 
-tiles : Game.Model.Game -> List (Svg Msg.Game.Msg)
+tiles : Game.Model.Game -> List (Svg Game.Msg.Msg)
 tiles game =
     let
         tile_ =
@@ -101,7 +101,7 @@ tiles game =
         List.map tile_ <| Dict.toList game.board
 
 
-board : Int -> Svg Msg.Game.Msg
+board : Int -> Svg Game.Msg.Msg
 board size =
     use
         [ x_ 0
@@ -109,12 +109,12 @@ board size =
         , width_ size
         , width_ size
         , xlinkHref "#board"
-        , Events.onMouseOut <| Msg.Game.OnLeave
+        , Events.onMouseOut <| Game.Msg.OnLeave
         ]
         []
 
 
-renderBoard : Game.Model.Game -> Html.Html Msg.Game.Msg
+renderBoard : Game.Model.Game -> Html.Html Game.Msg.Msg
 renderBoard game =
     let
         attributes =

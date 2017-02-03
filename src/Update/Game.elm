@@ -3,7 +3,7 @@ module Update.Game exposing (update)
 import Dict
 import Game.Model exposing (Game, Pos, Point(Empty, Occupied), putPoint)
 import Game.Util exposing (flipStone)
-import Msg.Game
+import Game.Msg
 
 
 enterTile : Game -> Pos -> Game
@@ -55,14 +55,14 @@ leaveBoard game =
     { game | hovering = Nothing }
 
 
-update : Msg.Game.Msg -> Game -> Game
+update : Game.Msg.Msg -> Game -> Game
 update msg game =
     case msg of
-        Msg.Game.OnEnter pos ->
+        Game.Msg.OnEnter pos ->
             enterTile game pos
 
-        Msg.Game.OnLeave ->
+        Game.Msg.OnLeave ->
             leaveBoard game
 
-        Msg.Game.OnClick pos ->
+        Game.Msg.OnClick pos ->
             clickTile game pos

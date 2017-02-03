@@ -1,4 +1,4 @@
-module Msg.Game exposing (..)
+module Game.Msg exposing (..)
 
 import Game.Model
 
