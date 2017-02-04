@@ -4,18 +4,22 @@ import Platform exposing (Program)
 import Html exposing (map, beginnerProgram)
 import Game.View exposing (renderBoard)
 import Game.Model
+import Game.Update
 import Game.Msg
 import Menu
 
 
-type App
-    = NewGame Menu.Setup
-    | Game Game.Model.Game
+type alias App =
+    { setup : Menu.Setup
+    , game : Game.Model.Game
+    }
 
 
 newApp : App
 newApp =
-    NewGame Menu.newSetup
+    { setup = Menu.newSetup
+    , game = Game.Model.newGame 19 0 0
+    }
 
 
 type Msg
@@ -25,12 +29,20 @@ type Msg
 
 render : App -> Html.Html Msg
 render app =
-    case app of
-        NewGame setup ->
-            map (\msg -> SetupUpdate msg) <| Menu.render setup
+    Html.div []
+        [ map (\msg -> SetupUpdate msg) <| Menu.render app.setup
+        , map (\msg -> GameUpdate msg) <| renderBoard app.game
+        ]
 
-        Game game ->
-            map (\msg -> GameUpdate msg) <| renderBoard game
+
+update : Msg -> App -> App
+update msg app =
+    case msg of
+        GameUpdate gameMsg ->
+            { app | game = Game.Update.update gameMsg app.game }
+
+        SetupUpdate setupMsg ->
+            app
 
 
 main : Program Never App Msg
@@ -38,5 +50,5 @@ main =
     beginnerProgram
         { model = newApp
         , view = render
-        , update = (\msg app -> app)
+        , update = update
         }
