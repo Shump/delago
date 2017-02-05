@@ -1,6 +1,7 @@
 module Main exposing (..)
 
 import Platform exposing (Program)
+import Maybe exposing (Maybe(..))
 import Html exposing (map, beginnerProgram)
 import Game.View exposing (renderBoard)
 import Game.Model
@@ -15,20 +16,23 @@ type alias App =
     }
 
 
-defaultSetup : Menu.Setup
+defaultSetup : Menu.DefaultSetup
 defaultSetup =
-    Menu.newSetup Menu.Nineteen 6.5 0
+    { size = Menu.Nineteen
+    , komi = 6.5
+    , okigo = 0
+    }
 
 
-createGame : Menu.Setup -> Game.Model.Game
+createGame : Menu.Setup -> Maybe Game.Model.Game
 createGame setup =
-    Game.Model.newGame (Menu.sizeToInt setup.size) setup.komi setup.okigo
+    Maybe.map2 (Game.Model.newGame (Menu.sizeToInt setup.size)) setup.komi setup.okigo
 
 
 newApp : App
 newApp =
-    { setup = defaultSetup
-    , game = createGame defaultSetup
+    { setup = Menu.newSetup defaultSetup.size defaultSetup.komi defaultSetup.okigo
+    , game = Game.Model.newGame (Menu.sizeToInt defaultSetup.size) defaultSetup.komi defaultSetup.okigo
     }
 
 
@@ -58,7 +62,7 @@ update msg app =
                     { app | setup = setup }
 
                 Menu.NewGame ->
-                    { app | game = createGame app.setup }
+                    { app | game = Maybe.withDefault app.game (createGame app.setup) }
 
 
 main : Program Never App Msg

@@ -34,3 +34,12 @@ all bs =
 any : List Bool -> Bool
 any bs =
     List.foldr (||) False bs
+
+
+isCycleOf : Float -> Float -> Bool
+isCycleOf value cycle =
+    let
+        cycles =
+            value / cycle
+    in
+        cycles == toFloat (truncate cycles)

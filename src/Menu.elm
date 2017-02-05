@@ -1,10 +1,12 @@
 module Menu exposing (..)
 
 import String
+import Maybe exposing (Maybe(..))
 import Result
 import Html exposing (div, fieldset, label, text, input, button)
-import Html.Attributes as Attr exposing (type_, name, checked)
+import Html.Attributes as Attr exposing (type_, name, checked, disabled)
 import Html.Events exposing (onClick, onInput)
+import Util exposing (isCycleOf)
 
 
 type BoardSize
@@ -36,6 +38,13 @@ type alias Okigo =
 
 type alias Setup =
     { size : BoardSize
+    , komi : Maybe Komi
+    , okigo : Maybe Okigo
+    }
+
+
+type alias DefaultSetup =
+    { size : BoardSize
     , komi : Komi
     , okigo : Okigo
     }
@@ -44,8 +53,8 @@ type alias Setup =
 newSetup : BoardSize -> Komi -> Okigo -> Setup
 newSetup size komi okigo =
     { size = size
-    , komi = komi
-    , okigo = okigo
+    , komi = Just komi
+    , okigo = Just okigo
     }
 
 
@@ -54,14 +63,23 @@ updateSize setup size =
     { setup | size = size }
 
 
-updateKomi : Setup -> Komi -> Setup
+updateKomi : Setup -> Maybe Komi -> Setup
 updateKomi setup komi =
     { setup | komi = komi }
 
 
-updateOkigo : Setup -> Okigo -> Setup
+updateOkigo : Setup -> Maybe Okigo -> Setup
 updateOkigo setup okigo =
     { setup | okigo = okigo }
+
+
+isSetupValid : Setup -> Bool
+isSetupValid { komi, okigo } =
+    let
+        verify komi_ okigo_ =
+            komi_ >= 0 && isCycleOf komi_ 0.5 && okigo_ >= 0
+    in
+        Maybe.withDefault False <| Maybe.map2 verify komi okigo
 
 
 type Msg
@@ -83,19 +101,28 @@ radio default setup value title =
         ]
 
 
-render : Setup -> Setup -> Html.Html Msg
+render : DefaultSetup -> Setup -> Html.Html Msg
 render defaults setup =
     let
         radio_ =
             radio defaults.size setup
 
+        komiUpdate_ =
+            Update << updateKomi setup
+
         updateKomi_ str =
-            Result.withDefault (Update setup) <|
-                Result.map (Update << updateKomi setup) (String.toFloat str)
+            Result.withDefault (komiUpdate_ Nothing) <|
+                Result.map (komiUpdate_ << Just) (String.toFloat str)
+
+        okigoUpdate_ =
+            Update << updateOkigo setup
 
         updateOkigo_ str =
-            Result.withDefault (Update setup) <|
-                Result.map (Update << updateOkigo setup) (String.toInt str)
+            Result.withDefault (okigoUpdate_ Nothing) <|
+                Result.map (okigoUpdate_ << Just) (String.toInt str)
+
+        isSubmitDisabled_ =
+            not <| isSetupValid setup
     in
         div []
             [ fieldset []
@@ -126,5 +153,9 @@ render defaults setup =
                     ]
                     []
                 ]
-            , button [ onClick NewGame ] [ text "New Game" ]
+            , button
+                [ onClick NewGame
+                , disabled isSubmitDisabled_
+                ]
+                [ text "New Game" ]
             ]
