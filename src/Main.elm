@@ -40,15 +40,15 @@ newApp =
 type Msg
     = GameUpdate Game.Msg.Msg
     | SetupUpdate Menu.Msg
+    | ScreenUpdate Game.Screen.Msg
 
 
 render : App -> Html.Html Msg
 render app =
     Html.div []
-        [ map (\msg -> GameUpdate msg) <| renderBoard app.game
-        , map (\msg -> SetupUpdate msg) <|
-            Menu.render defaultSetup app.setup
-        , Game.Screen.render app.game
+        [ map GameUpdate <| renderBoard app.game
+        , map SetupUpdate <| Menu.render defaultSetup app.setup
+        , map ScreenUpdate <| Game.Screen.render app.game
         ]
 
 
@@ -65,6 +65,14 @@ update msg app =
 
                 Menu.NewGame ->
                     { app | game = Maybe.withDefault app.game (createGame app.setup) }
+
+        ScreenUpdate screenMsg ->
+            case screenMsg of
+                Game.Screen.Undo ->
+                    { app | game = Game.Model.undo app.game }
+
+                Game.Screen.Redo ->
+                    { app | game = Game.Model.redo app.game }
 
 
 main : Program Never App Msg

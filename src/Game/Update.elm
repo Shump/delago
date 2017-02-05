@@ -16,7 +16,8 @@ enterTile game pos =
 clickTile : Game -> Pos -> Game
 clickTile game pos =
     let
-        currentState = Zipper.current game.history
+        currentState =
+            Zipper.current game.history
 
         addStone =
             let
@@ -27,20 +28,18 @@ clickTile game pos =
                     { currentState
                         | board = newBoard
                         , nextPlayer =
-                            if game.handicap > 0 then
+                            if currentState.handicap > 0 then
                                 currentState.nextPlayer
                             else
                                 flipPlayer currentState.nextPlayer
+                        , handicap =
+                            if currentState.handicap > 0 then
+                                currentState.handicap - 1
+                            else
+                                currentState.handicap
                     }
             in
-                { game
-                    | history = next_ <| replaceRight [newState] game.history
-                    , handicap =
-                        if game.handicap > 0 then
-                            game.handicap - 1
-                        else
-                            game.handicap
-                }
+                { game | history = next_ <| replaceRight [ newState ] game.history }
 
         removeStone =
             let
@@ -48,7 +47,7 @@ clickTile game pos =
                     { currentState | board = putPoint pos Empty currentState.board }
             in
                 { game
-                    | history = next_ <| replaceRight [newState] game.history
+                    | history = next_ <| replaceRight [ newState ] game.history
                 }
 
         updatePoint point =
