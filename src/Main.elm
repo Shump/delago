@@ -15,10 +15,20 @@ type alias App =
     }
 
 
+defaultSetup : Menu.Setup
+defaultSetup =
+    Menu.newSetup Menu.Nineteen 6.5 0
+
+
+createGame : Menu.Setup -> Game.Model.Game
+createGame setup =
+    Game.Model.newGame (Menu.sizeToInt setup.size) setup.komi setup.okigo
+
+
 newApp : App
 newApp =
-    { setup = Menu.newSetup
-    , game = Game.Model.newGame 19 0 0
+    { setup = defaultSetup
+    , game = createGame defaultSetup
     }
 
 
@@ -30,7 +40,8 @@ type Msg
 render : App -> Html.Html Msg
 render app =
     Html.div []
-        [ map (\msg -> SetupUpdate msg) <| Menu.render app.setup
+        [ map (\msg -> SetupUpdate msg) <|
+            Menu.render defaultSetup app.setup
         , map (\msg -> GameUpdate msg) <| renderBoard app.game
         ]
 
@@ -41,8 +52,13 @@ update msg app =
         GameUpdate gameMsg ->
             { app | game = Game.Update.update gameMsg app.game }
 
-        SetupUpdate setupMsg ->
-            app
+        SetupUpdate menuMsg ->
+            case menuMsg of
+                Menu.Update setup ->
+                    { app | setup = setup }
+
+                Menu.NewGame ->
+                    { app | game = createGame app.setup }
 
 
 main : Program Never App Msg
