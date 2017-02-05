@@ -7,6 +7,7 @@ import Game.View exposing (renderBoard)
 import Game.Model
 import Game.Update
 import Game.Msg
+import Game.Screen
 import Menu
 
 
@@ -44,9 +45,10 @@ type Msg
 render : App -> Html.Html Msg
 render app =
     Html.div []
-        [ map (\msg -> SetupUpdate msg) <|
+        [ map (\msg -> GameUpdate msg) <| renderBoard app.game
+        , map (\msg -> SetupUpdate msg) <|
             Menu.render defaultSetup app.setup
-        , map (\msg -> GameUpdate msg) <| renderBoard app.game
+        , Game.Screen.render app.game
         ]
 
 

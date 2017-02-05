@@ -118,8 +118,8 @@ renderBoard : Game.Model.Game -> Html.Html Game.Msg.Msg
 renderBoard game =
     let
         attributes =
-            [ width_ 600
-            , height_ 600
+            [ width_ 512
+            , height_ 512
             , viewBox_ 0 0 game.size game.size
             ]
 
