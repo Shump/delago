@@ -8,6 +8,7 @@ import List
 import Svg exposing (Svg, svg, use)
 import Svg.Events as Events
 import Svg.Attributes exposing (xlinkHref, x, y, width, height)
+import List.Zipper as Zipper
 import Game.Model
     exposing
         ( Game
@@ -62,8 +63,11 @@ tile game ( ( x, y ), point ) =
         isHovering =
             (==) pos_
 
+        currentState =
+            Zipper.current game.history
+
         nextTileId =
-            stoneId game.nextPlayer
+            stoneId currentState.nextPlayer
 
         boardId =
             case point of
@@ -97,8 +101,11 @@ tiles game =
     let
         tile_ =
             tile game
+
+        currentState =
+            Zipper.current game.history
     in
-        List.map tile_ <| Dict.toList game.board
+        List.map tile_ <| Dict.toList currentState.board
 
 
 board : Int -> Svg Game.Msg.Msg

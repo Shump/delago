@@ -2,8 +2,10 @@ module Game.Update exposing (update)
 
 import Dict
 import Game.Model exposing (Game, Pos, Point(Empty, Occupied), putPoint)
-import Game.Util exposing (flipStone)
+import Game.Util exposing (flipStone, flipPlayer)
 import Game.Msg
+import List.Zipper as Zipper
+import List.Zipper.Extra exposing (replaceRight, next_)
 
 
 enterTile : Game -> Pos -> Game
@@ -14,27 +16,40 @@ enterTile game pos =
 clickTile : Game -> Pos -> Game
 clickTile game pos =
     let
+        currentState = Zipper.current game.history
+
         addStone =
-            { game
-                | board =
-                    putPoint pos (Occupied game.nextPlayer) game.board
-                , nextPlayer =
-                    if game.handicap > 0 then
-                        game.nextPlayer
-                    else
-                        flipStone game.nextPlayer
-                , handicap =
-                    if game.handicap > 0 then
-                        game.handicap - 1
-                    else
-                        game.handicap
-            }
+            let
+                newBoard =
+                    putPoint pos (Occupied currentState.nextPlayer) currentState.board
+
+                newState =
+                    { currentState
+                        | board = newBoard
+                        , nextPlayer =
+                            if game.handicap > 0 then
+                                currentState.nextPlayer
+                            else
+                                flipPlayer currentState.nextPlayer
+                    }
+            in
+                { game
+                    | history = next_ <| replaceRight [newState] game.history
+                    , handicap =
+                        if game.handicap > 0 then
+                            game.handicap - 1
+                        else
+                            game.handicap
+                }
 
         removeStone =
-            { game
-                | board =
-                    putPoint pos Empty game.board
-            }
+            let
+                newState =
+                    { currentState | board = putPoint pos Empty currentState.board }
+            in
+                { game
+                    | history = next_ <| replaceRight [newState] game.history
+                }
 
         updatePoint point =
             case point of
@@ -45,7 +60,7 @@ clickTile game pos =
                     removeStone
 
         maybePoint =
-            Dict.get ( pos.x, pos.y ) game.board
+            Dict.get ( pos.x, pos.y ) currentState.board
     in
         Maybe.withDefault game <| Maybe.map updatePoint maybePoint
 

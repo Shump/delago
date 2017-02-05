@@ -4,6 +4,7 @@ import Dict
 import List
 import Maybe exposing (Maybe)
 import Util exposing (cartesianProduct)
+import List.Zipper as Zipper
 
 
 type Stone
@@ -30,9 +31,14 @@ type alias Player =
     Stone
 
 
-type alias Game =
+type alias BoardState =
     { board : Board
     , nextPlayer : Player
+    }
+
+
+type alias Game =
+    { history : Zipper.Zipper BoardState
     , hovering : Maybe Pos
     , komi : Float
     , handicap : Int
@@ -55,8 +61,7 @@ newGame size komi handicap =
             in
                 Dict.fromList <| List.map (\pos -> ( pos, Empty )) positions
     in
-        { board = emptyBoard size
-        , nextPlayer = Black
+        { history = Zipper.singleton <| BoardState (emptyBoard size) Black
         , hovering = Nothing
         , komi = komi
         , handicap = handicap
