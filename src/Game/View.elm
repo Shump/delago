@@ -90,7 +90,7 @@ tile game ( ( x, y ), point ) =
             , width_ 1
             , height_ 1
             , xlinkHref <| Maybe.withDefault emptyId sym
-            , Events.onClick <| Game.Msg.OnClick pos_
+            , Events.onMouseUp <| Game.Msg.OnClick pos_
             , Events.onMouseOver <| Game.Msg.OnEnter pos_
             ]
             []
