@@ -1,20 +1,20 @@
 module Game.View exposing (renderBoard)
 
 import Html
-import Maybe exposing (map)
-import Maybe.Extra exposing (filter, or)
+import Maybe
 import Dict
 import List
 import Svg exposing (Svg, svg, use)
 import Svg.Events as Events
-import Svg.Attributes exposing (xlinkHref, x, y, width, height)
+import Svg.Attributes as Attributes exposing (xlinkHref, x, y, width, height)
 import List.Zipper as Zipper
 import Game.Model
     exposing
         ( Game
         , Pos
-        , Point(Empty, Occupied)
-        , Stone(Black, White)
+        , Point(..)
+        , Stone(..)
+        , Player
         )
 import Game.Msg
 import Game.SvgDefs
@@ -24,34 +24,60 @@ import Game.SvgDefs
         , y_
         , width_
         , height_
-        , emptyTileSymbol
-        , emptyId
-        , blackTileSymbol
-        , blackId
-        , whiteTileSymbol
-        , whiteId
         , boardSymbol
         )
 
 
-stoneId : Stone -> String
-stoneId stone =
-    case stone of
+renderBlackStone : Pos -> Svg Game.Msg.Msg
+renderBlackStone ({ x, y } as pos) =
+    Svg.rect
+        [ x_ x
+        , y_ y
+        , width_ 1
+        , height_ 1
+        , Attributes.fill "black"
+        , Events.onMouseUp <| Game.Msg.OnClick pos
+        , Events.onMouseOver <| Game.Msg.OnEnter pos
+        ]
+        []
+
+
+renderWhiteStone : Pos -> Svg Game.Msg.Msg
+renderWhiteStone ({ x, y } as pos) =
+    Svg.rect
+        [ x_ x
+        , y_ y
+        , width_ 1
+        , height_ 1
+        , Attributes.fill "white"
+        , Events.onMouseUp <| Game.Msg.OnClick pos
+        , Events.onMouseOver <| Game.Msg.OnEnter pos
+        ]
+        []
+
+
+renderStone : Pos -> Player -> Svg Game.Msg.Msg
+renderStone pos player =
+    case player of
         Black ->
-            blackId
+            renderBlackStone pos
 
         White ->
-            whiteId
+            renderWhiteStone pos
 
 
-pointId : Point -> String
-pointId point =
-    case point of
-        Empty ->
-            emptyId
-
-        Occupied stone ->
-            stoneId stone
+renderEmptyTile : Pos -> Svg Game.Msg.Msg
+renderEmptyTile ({ x, y } as pos) =
+    Svg.rect
+        [ x_ x
+        , y_ y
+        , width_ 1
+        , height_ 1
+        , Attributes.fill "transparent"
+        , Events.onMouseUp <| Game.Msg.OnClick pos
+        , Events.onMouseOver <| Game.Msg.OnEnter pos
+        ]
+        []
 
 
 tile : Game -> ( ( Int, Int ), Point ) -> Svg Game.Msg.Msg
@@ -60,40 +86,24 @@ tile game ( ( x, y ), point ) =
         pos_ =
             { x = x, y = y }
 
-        isHovering =
-            (==) pos_
-
         currentState =
             Zipper.current game.history
-
-        nextTileId =
-            stoneId currentState.nextPlayer
-
-        boardId =
-            case point of
-                Empty ->
-                    Nothing
-
-                Occupied stone ->
-                    Just <| stoneId stone
-
-        hoveringId =
-            filter isHovering game.hovering
-                |> map (always nextTileId)
-
-        sym =
-            or boardId hoveringId
     in
-        use
-            [ x_ x
-            , y_ y
-            , width_ 1
-            , height_ 1
-            , xlinkHref <| Maybe.withDefault emptyId sym
-            , Events.onMouseUp <| Game.Msg.OnClick pos_
-            , Events.onMouseOver <| Game.Msg.OnEnter pos_
-            ]
-            []
+        case ( point, game.hovering ) of
+            ( Occupied Black, _ ) ->
+                renderBlackStone pos_
+
+            ( Occupied White, _ ) ->
+                renderWhiteStone pos_
+
+            ( Empty, Just hoveringPos ) ->
+                if hoveringPos == pos_ then
+                    renderStone pos_ currentState.nextPlayer
+                else
+                    renderEmptyTile pos_
+
+            ( Empty, Nothing ) ->
+                renderEmptyTile pos_
 
 
 tiles : Game.Model.Game -> List (Svg Game.Msg.Msg)
@@ -132,9 +142,6 @@ renderBoard game =
 
         subElems =
             [ boardSymbol game.size
-            , emptyTileSymbol
-            , blackTileSymbol
-            , whiteTileSymbol
             , board game.size
             ]
                 ++ tiles game

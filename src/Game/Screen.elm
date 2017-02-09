@@ -8,6 +8,7 @@ import List.Zipper as Zipper
 import Game.Model
 import Game.Util exposing (flipPlayer, playerToString)
 
+
 type Msg
     = Undo
     | Redo

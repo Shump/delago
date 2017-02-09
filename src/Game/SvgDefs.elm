@@ -5,12 +5,6 @@ module Game.SvgDefs
         , y_
         , width_
         , height_
-        , emptyTileSymbol
-        , emptyId
-        , blackTileSymbol
-        , blackId
-        , whiteTileSymbol
-        , whiteId
         , boardSymbol
         )
 
@@ -43,66 +37,6 @@ width_ value =
 height_ : Int -> Svg.Attribute msg
 height_ value =
     A.height <| toString value
-
-
-emptyId : String
-emptyId =
-    "#emptyTile"
-
-
-emptyTileSymbol : Svg msg
-emptyTileSymbol =
-    Svg.symbol
-        [ A.id "emptyTile", A.viewBox "0 0 1 1" ]
-        [ Svg.rect
-            [ A.x "0"
-            , A.y "0"
-            , A.width "1"
-            , A.height "1"
-            , A.opacity "0"
-            ]
-            []
-        ]
-
-
-blackId : String
-blackId =
-    "#blackTile"
-
-
-blackTileSymbol : Svg msg
-blackTileSymbol =
-    Svg.symbol
-        [ A.id "blackTile", A.viewBox "0 0 1 1" ]
-        [ Svg.rect
-            [ A.x "0"
-            , A.y "0"
-            , A.width "1"
-            , A.height "1"
-            , A.fill "black"
-            ]
-            []
-        ]
-
-
-whiteId : String
-whiteId =
-    "#whiteTile"
-
-
-whiteTileSymbol : Svg msg
-whiteTileSymbol =
-    Svg.symbol
-        [ A.id "whiteTile", A.viewBox "0 0 1 1" ]
-        [ Svg.rect
-            [ A.x "0"
-            , A.y "0"
-            , A.width "1"
-            , A.height "1"
-            , A.fill "white"
-            ]
-            []
-        ]
 
 
 supportPositions : Int -> List ( Int, Int )
