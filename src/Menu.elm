@@ -1,11 +1,12 @@
 module Menu exposing (..)
 
-import String
-import Maybe exposing (Maybe(..))
-import Result
 import Html exposing (div, fieldset, label, text, input, button)
 import Html.Attributes as Attr exposing (type_, name, checked, disabled)
 import Html.Events exposing (onClick, onInput)
+import Maybe exposing (Maybe(..))
+import Result
+import String
+
 import Util exposing (isCycleOf)
 
 

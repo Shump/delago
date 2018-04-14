@@ -1,21 +1,15 @@
 module Game.View exposing (renderBoard)
 
-import Html
-import Maybe
 import Dict
+import Html
 import List
+import Maybe
 import Svg exposing (Svg, svg, use)
-import Svg.Events as Events
 import Svg.Attributes as Attributes exposing (xlinkHref, x, y, width, height)
+import Svg.Events as Events
+
 import List.Zipper as Zipper
-import Game.Types
-    exposing
-        ( Game
-        , Pos
-        , Point(..)
-        , Stone(..)
-        , Player
-        )
+
 import Game.SvgDefs
     exposing
         ( viewBox_
@@ -24,6 +18,14 @@ import Game.SvgDefs
         , width_
         , height_
         , boardSymbol
+        )
+import Game.Types
+    exposing
+        ( Game
+        , Pos
+        , Point(..)
+        , Stone(..)
+        , Player
         )
 
 

@@ -1,7 +1,8 @@
 module Digits exposing (..)
 
-import String
 import List
+import String
+
 import List.Extra exposing (elemIndex, unfoldr, getAt)
 import Maybe.Extra exposing (traverse, combine)
 

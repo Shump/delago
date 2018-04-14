@@ -1,6 +1,7 @@
 module Util exposing (..)
 
 import List
+
 import List.Extra exposing (andThen)
 
 

@@ -6,10 +6,10 @@ import Maybe exposing (Maybe)
 import Util exposing (cartesianProduct)
 
 import List.Zipper as Zipper
-import List.Zipper.Extra exposing (previous_, next_, replaceRight, next_)
 
 import Game.Types exposing (..)
 import Game.Util exposing (flipStone, flipPlayer)
+import List.Zipper.Extra exposing (previous_, next_, replaceRight, next_)
 
 
 putPoint : Pos -> Point -> Board -> Board

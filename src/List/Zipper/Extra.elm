@@ -1,6 +1,7 @@
 module List.Zipper.Extra exposing (..)
 
 import Maybe
+
 import List.Zipper as Zipper exposing (Zipper(..))
 
 

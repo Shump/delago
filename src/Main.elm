@@ -1,16 +1,18 @@
 module Main exposing (..)
 
-import Platform exposing (Program)
-import Maybe exposing (Maybe(..))
 import Html exposing (map, beginnerProgram, div, span, text, button)
 import Html.Attributes exposing (disabled)
 import Html.Events exposing (onClick)
 import List
+import Maybe exposing (Maybe(..))
+import Platform exposing (Program)
+
 import List.Zipper as Zipper
-import Game.View exposing (renderBoard)
+
 import Game
 import Game.Types
 import Game.Util exposing (flipPlayer, playerToString)
+import Game.View exposing (renderBoard)
 import Menu
 
 
