@@ -8,7 +8,7 @@ import Svg exposing (Svg, svg, use)
 import Svg.Events as Events
 import Svg.Attributes as Attributes exposing (xlinkHref, x, y, width, height)
 import List.Zipper as Zipper
-import Game.Model
+import Game.Types
     exposing
         ( Game
         , Pos
@@ -16,7 +16,6 @@ import Game.Model
         , Stone(..)
         , Player
         )
-import Game.Msg
 import Game.SvgDefs
     exposing
         ( viewBox_
@@ -28,60 +27,60 @@ import Game.SvgDefs
         )
 
 
-renderBlackStone : Pos -> Svg Game.Msg.Msg
-renderBlackStone ({ x, y } as pos) =
+renderBlackStone : Pos -> { onEnter : Pos -> a, onLeave : a, onClick : Pos -> a } -> Svg a
+renderBlackStone ({ x, y } as pos) msgs =
     Svg.rect
         [ x_ x
         , y_ y
         , width_ 1
         , height_ 1
         , Attributes.fill "black"
-        , Events.onMouseUp <| Game.Msg.OnClick pos
-        , Events.onMouseOver <| Game.Msg.OnEnter pos
+        , Events.onMouseUp <| msgs.onClick pos
+        , Events.onMouseOver <| msgs.onEnter pos
         ]
         []
 
 
-renderWhiteStone : Pos -> Svg Game.Msg.Msg
-renderWhiteStone ({ x, y } as pos) =
+renderWhiteStone : Pos -> { onEnter : Pos -> a, onLeave : a, onClick : Pos -> a } -> Svg a
+renderWhiteStone ({ x, y } as pos) msgs =
     Svg.rect
         [ x_ x
         , y_ y
         , width_ 1
         , height_ 1
         , Attributes.fill "white"
-        , Events.onMouseUp <| Game.Msg.OnClick pos
-        , Events.onMouseOver <| Game.Msg.OnEnter pos
+        , Events.onMouseUp <| msgs.onClick pos
+        , Events.onMouseOver <| msgs.onEnter pos
         ]
         []
 
 
-renderStone : Pos -> Player -> Svg Game.Msg.Msg
-renderStone pos player =
+renderStone : Pos -> Player -> { onEnter : Pos -> a, onLeave : a, onClick : Pos -> a } -> Svg a
+renderStone pos player msgs =
     case player of
         Black ->
-            renderBlackStone pos
+            renderBlackStone pos msgs
 
         White ->
-            renderWhiteStone pos
+            renderWhiteStone pos msgs
 
 
-renderEmptyTile : Pos -> Svg Game.Msg.Msg
-renderEmptyTile ({ x, y } as pos) =
+renderEmptyTile : Pos -> { onEnter : Pos -> a, onLeave : a, onClick : Pos -> a } -> Svg a
+renderEmptyTile ({ x, y } as pos) msgs =
     Svg.rect
         [ x_ x
         , y_ y
         , width_ 1
         , height_ 1
         , Attributes.fill "transparent"
-        , Events.onMouseUp <| Game.Msg.OnClick pos
-        , Events.onMouseOver <| Game.Msg.OnEnter pos
+        , Events.onMouseUp <| msgs.onClick pos
+        , Events.onMouseOver <| msgs.onEnter pos
         ]
         []
 
 
-tile : Game -> ( ( Int, Int ), Point ) -> Svg Game.Msg.Msg
-tile game ( ( x, y ), point ) =
+tile : Game -> { onEnter : Pos -> a, onLeave : a, onClick : Pos -> a } -> ( ( Int, Int ), Point ) -> Svg a
+tile game msgs ( ( x, y ), point ) =
     let
         pos_ =
             { x = x, y = y }
@@ -91,26 +90,26 @@ tile game ( ( x, y ), point ) =
     in
         case ( point, game.hovering ) of
             ( Occupied Black, _ ) ->
-                renderBlackStone pos_
+                renderBlackStone pos_ msgs
 
             ( Occupied White, _ ) ->
-                renderWhiteStone pos_
+                renderWhiteStone pos_ msgs
 
             ( Empty, Just hoveringPos ) ->
                 if hoveringPos == pos_ then
-                    renderStone pos_ currentState.nextPlayer
+                    renderStone pos_ currentState.nextPlayer msgs
                 else
-                    renderEmptyTile pos_
+                    renderEmptyTile pos_ msgs
 
             ( Empty, Nothing ) ->
-                renderEmptyTile pos_
+                renderEmptyTile pos_ msgs
 
 
-tiles : Game.Model.Game -> List (Svg Game.Msg.Msg)
-tiles game =
+tiles : Game.Types.Game -> { onEnter : Pos -> a, onLeave : a, onClick : Pos -> a } -> List (Svg a)
+tiles game msgs =
     let
         tile_ =
-            tile game
+            tile game msgs
 
         currentState =
             Zipper.current game.history
@@ -118,21 +117,21 @@ tiles game =
         List.map tile_ <| Dict.toList currentState.board
 
 
-board : Int -> Svg Game.Msg.Msg
-board size =
+board : Int -> { onEnter : Pos -> a, onLeave : a, onClick : Pos -> a } -> Svg a
+board size msgs =
     use
         [ x_ 0
         , y_ 0
         , width_ size
         , width_ size
         , xlinkHref "#board"
-        , Events.onMouseOut <| Game.Msg.OnLeave
+        , Events.onMouseOut <| msgs.onLeave
         ]
         []
 
 
-renderBoard : Game.Model.Game -> Html.Html Game.Msg.Msg
-renderBoard game =
+renderBoard : Game.Types.Game -> { onEnter : Pos -> a, onLeave : a, onClick : Pos -> a } -> Html.Html a
+renderBoard game a =
     let
         attributes =
             [ width_ 512
@@ -142,8 +141,8 @@ renderBoard game =
 
         subElems =
             [ boardSymbol game.size
-            , board game.size
+            , board game.size a
             ]
-                ++ tiles game
+                ++ tiles game a
     in
         svg attributes subElems

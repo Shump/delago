@@ -1,11 +1,47 @@
-module Game.Update exposing (update)
+module Game exposing (..)
 
 import Dict
-import Game.Model exposing (Game, Pos, Point(Empty, Occupied), putPoint)
-import Game.Util exposing (flipStone, flipPlayer)
-import Game.Msg
+import List
+import Maybe exposing (Maybe)
+import Util exposing (cartesianProduct)
+
 import List.Zipper as Zipper
-import List.Zipper.Extra exposing (replaceRight, next_)
+import List.Zipper.Extra exposing (previous_, next_, replaceRight, next_)
+
+import Game.Types exposing (..)
+import Game.Util exposing (flipStone, flipPlayer)
+
+
+putPoint : Pos -> Point -> Board -> Board
+putPoint { x, y } point board =
+    Dict.update ( x, y ) (Maybe.map (\_ -> point)) board
+
+
+newGame : Int -> Float -> Int -> Game
+newGame size komi handicap =
+    let
+        emptyBoard size =
+            let
+                positions =
+                    cartesianProduct (List.range 0 (size - 1)) (List.range 0 (size - 1))
+            in
+                Dict.fromList <| List.map (\pos -> ( pos, Empty )) positions
+    in
+        { history = Zipper.singleton <| BoardState (emptyBoard size) Black handicap
+        , hovering = Nothing
+        , komi = komi
+        , size = size
+        }
+
+
+undo : Game -> Game
+undo game =
+    { game | history = previous_ game.history }
+
+
+redo : Game -> Game
+redo game =
+    { game | history = next_ game.history }
 
 
 enterTile : Game -> Pos -> Game
@@ -67,16 +103,3 @@ clickTile game pos =
 leaveBoard : Game -> Game
 leaveBoard game =
     { game | hovering = Nothing }
-
-
-update : Game.Msg.Msg -> Game -> Game
-update msg game =
-    case msg of
-        Game.Msg.OnEnter pos ->
-            enterTile game pos
-
-        Game.Msg.OnLeave ->
-            leaveBoard game
-
-        Game.Msg.OnClick pos ->
-            clickTile game pos

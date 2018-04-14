@@ -82,18 +82,13 @@ isSetupValid { komi, okigo } =
         Maybe.withDefault False <| Maybe.map2 verify komi okigo
 
 
-type Msg
-    = Update Setup
-    | NewGame
-
-
-radio : BoardSize -> Setup -> BoardSize -> String -> Html.Html Msg
-radio default setup value title =
+radio : BoardSize -> Setup -> ( Setup -> a ) -> BoardSize -> String -> Html.Html a
+radio default setup update value title =
     label []
         [ input
             [ type_ "radio"
             , name "board-size"
-            , onClick (Update { setup | size = value })
+            , onClick (update { setup | size = value })
             , checked (default == value)
             ]
             []
@@ -101,21 +96,21 @@ radio default setup value title =
         ]
 
 
-render : DefaultSetup -> Setup -> Html.Html Msg
-render defaults setup =
+render : DefaultSetup -> Setup -> { update : Setup -> a, newGame : a } -> Html.Html a
+render defaults setup msgs =
     let
         radio_ =
-            radio defaults.size setup
+            radio defaults.size setup msgs.update
 
         komiUpdate_ =
-            Update << updateKomi setup
+            msgs.update << updateKomi setup
 
         updateKomi_ str =
             Result.withDefault (komiUpdate_ Nothing) <|
                 Result.map (komiUpdate_ << Just) (String.toFloat str)
 
         okigoUpdate_ =
-            Update << updateOkigo setup
+            msgs.update << updateOkigo setup
 
         updateOkigo_ str =
             Result.withDefault (okigoUpdate_ Nothing) <|
@@ -154,7 +149,7 @@ render defaults setup =
                     []
                 ]
             , button
-                [ onClick NewGame
+                [ onClick msgs.newGame
                 , disabled isSubmitDisabled_
                 ]
                 [ text "New Game" ]

@@ -1,16 +1,6 @@
 module Game.Util exposing (..)
 
-import Game.Model exposing (..)
-
-
-stoneToString : Stone -> String
-stoneToString stone =
-    case stone of
-        Black ->
-            "Black"
-
-        White ->
-            "White"
+import Game.Types exposing (..)
 
 
 flipStone : Stone -> Stone
@@ -26,6 +16,16 @@ flipStone stone =
 flipPlayer : Player -> Player
 flipPlayer =
     flipStone
+
+
+stoneToString : Stone -> String
+stoneToString stone =
+    case stone of
+        Black ->
+            "Black"
+
+        White ->
+            "White"
 
 
 playerToString : Player -> String
