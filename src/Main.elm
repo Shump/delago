@@ -1,6 +1,6 @@
 module Main exposing (..)
 
-import Html exposing (map, beginnerProgram, div, span, text, button)
+import Html exposing (beginnerProgram, div, span, text, button)
 import Html.Attributes exposing (disabled)
 import Html.Events exposing (onClick)
 import List
