@@ -121,9 +121,6 @@ tiles game msgs =
         tile_ =
             tile game msgs
 
-        currentState =
-            Zipper.current game.history
-
         positions =
             cartesianProduct (List.range 0 (game.size - 1)) (List.range 0 (game.size - 1))
     in
