@@ -88,14 +88,14 @@ tile game msgs ( x, y ) =
         pos_ =
             { x = x, y = y }
 
-        currentState =
+        currentBoard =
             Zipper.current game.history
 
         nextPlayer =
-            Game.Util.nextPlayer currentState.board game.handicap
+            Game.Util.nextPlayer currentBoard game.handicap
 
         point =
-            Dict.get ( x, y ) currentState.board
+            Dict.get ( x, y ) currentBoard
 
     in
         case ( point, game.hovering ) of

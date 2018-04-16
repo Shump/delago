@@ -24,13 +24,8 @@ type alias Player =
     Stone
 
 
-type alias BoardState =
-    { board : Board
-    }
-
-
 type alias Game =
-    { history : Zipper.Zipper BoardState
+    { history : Zipper.Zipper Board
     , hovering : Maybe Pos
     , komi : Float
     , size : Int

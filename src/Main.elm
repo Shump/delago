@@ -55,11 +55,11 @@ type Msg
 renderScreen : Game.Types.Game -> Html.Html Msg
 renderScreen game =
     let
-        currentState =
+        currentBoard =
             Zipper.current game.history
 
         nextPlayer =
-            Game.Util.nextPlayer currentState.board game.handicap
+            Game.Util.nextPlayer currentBoard game.handicap
     in
         div []
             [ span [] [ text ("Current Player: " ++ playerToString nextPlayer) ]

@@ -22,7 +22,7 @@ newGame size komi handicap =
         emptyBoard _ =
             Dict.empty
     in
-        { history = Zipper.singleton <| BoardState (emptyBoard size)
+        { history = Zipper.singleton <| emptyBoard size
         , hovering = Nothing
         , komi = komi
         , size = size
@@ -48,32 +48,25 @@ enterTile game pos =
 clickTile : Game -> Pos -> Game
 clickTile game pos =
     let
-        currentState =
+        currentBoard =
             Zipper.current game.history
 
         nextPlayer =
-            Game.Util.nextPlayer currentState.board game.handicap
+            Game.Util.nextPlayer currentBoard game.handicap
 
         addStone =
             let
                 newBoard =
-                    putPoint pos nextPlayer currentState.board
-
-                newState =
-                    { currentState
-                        | board = newBoard
-                    }
+                    putPoint pos nextPlayer currentBoard
             in
-                { game | history = next_ <| replaceRight [ newState ] game.history }
+                { game | history = next_ <| replaceRight [ newBoard ] game.history }
 
         removeStone =
             let
-                newState =
-                    { currentState | board = Dict.remove ( pos.x, pos.y ) currentState.board }
+                newBoard =
+                    Dict.remove ( pos.x, pos.y ) currentBoard
             in
-                { game
-                    | history = next_ <| replaceRight [ newState ] game.history
-                }
+                { game | history = next_ <| replaceRight [ newBoard ] game.history }
 
         updatePoint point =
             case point of
@@ -84,7 +77,7 @@ clickTile game pos =
                     removeStone
 
         maybePoint =
-            Dict.get ( pos.x, pos.y ) currentState.board
+            Dict.get ( pos.x, pos.y ) currentBoard
     in
         updatePoint maybePoint
 
