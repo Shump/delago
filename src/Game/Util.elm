@@ -1,5 +1,7 @@
 module Game.Util exposing (..)
 
+import Dict
+
 import Game.Types exposing (..)
 
 
@@ -33,14 +35,10 @@ playerToString =
     stoneToString
 
 
-isOccupied : Point -> Bool
-isOccupied point =
-    case point of
-        Empty ->
-            False
+stones : Board -> Int
+stones board = Dict.size board
 
-        Occupied _ ->
-            True
+
 
 
 getPos : ( Int, Int ) -> Pos

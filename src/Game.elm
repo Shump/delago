@@ -1,31 +1,26 @@
 module Game exposing (..)
 
 import Dict
-import List
 import Maybe exposing (Maybe)
-import Util exposing (cartesianProduct)
 
 import List.Zipper as Zipper
+import Maybe.Extra
 
 import Game.Types exposing (..)
 import Game.Util exposing (flipStone, flipPlayer)
 import List.Zipper.Extra exposing (previous_, next_, replaceRight, next_)
 
 
-putPoint : Pos -> Point -> Board -> Board
-putPoint { x, y } point board =
-    Dict.update ( x, y ) (Maybe.map (\_ -> point)) board
+putPoint : Pos -> Stone -> Board -> Board
+putPoint { x, y } stone board =
+    Dict.update ( x, y ) ( Maybe.Extra.or <| Just stone ) board
 
 
 newGame : Int -> Float -> Int -> Game
 newGame size komi handicap =
     let
-        emptyBoard size =
-            let
-                positions =
-                    cartesianProduct (List.range 0 (size - 1)) (List.range 0 (size - 1))
-            in
-                Dict.fromList <| List.map (\pos -> ( pos, Empty )) positions
+        emptyBoard _ =
+            Dict.empty
     in
         { history = Zipper.singleton <| BoardState (emptyBoard size) Black handicap
         , hovering = Nothing
@@ -58,7 +53,7 @@ clickTile game pos =
         addStone =
             let
                 newBoard =
-                    putPoint pos (Occupied currentState.nextPlayer) currentState.board
+                    putPoint pos (currentState.nextPlayer) currentState.board
 
                 newState =
                     { currentState
@@ -80,7 +75,7 @@ clickTile game pos =
         removeStone =
             let
                 newState =
-                    { currentState | board = putPoint pos Empty currentState.board }
+                    { currentState | board = Dict.remove ( pos.x, pos.y ) currentState.board }
             in
                 { game
                     | history = next_ <| replaceRight [ newState ] game.history
@@ -88,16 +83,16 @@ clickTile game pos =
 
         updatePoint point =
             case point of
-                Empty ->
+                Nothing ->
                     addStone
 
-                Occupied _ ->
+                Just _ ->
                     removeStone
 
         maybePoint =
             Dict.get ( pos.x, pos.y ) currentState.board
     in
-        Maybe.withDefault game <| Maybe.map updatePoint maybePoint
+        updatePoint maybePoint
 
 
 leaveBoard : Game -> Game

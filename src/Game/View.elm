@@ -23,10 +23,10 @@ import Game.Types
     exposing
         ( Game
         , Pos
-        , Point(..)
         , Stone(..)
         , Player
         )
+import Util exposing (cartesianProduct)
 
 
 renderBlackStone : Pos -> { onEnter : Pos -> a, onLeave : a, onClick : Pos -> a } -> Svg a
@@ -81,29 +81,33 @@ renderEmptyTile ({ x, y } as pos) msgs =
         []
 
 
-tile : Game -> { onEnter : Pos -> a, onLeave : a, onClick : Pos -> a } -> ( ( Int, Int ), Point ) -> Svg a
-tile game msgs ( ( x, y ), point ) =
+tile : Game -> { onEnter : Pos -> a, onLeave : a, onClick : Pos -> a } -> ( Int, Int ) -> Svg a
+tile game msgs ( x, y ) =
     let
         pos_ =
             { x = x, y = y }
 
         currentState =
             Zipper.current game.history
+
+        point =
+            Dict.get ( x, y ) currentState.board
+
     in
         case ( point, game.hovering ) of
-            ( Occupied Black, _ ) ->
+            ( Just Black, _ ) ->
                 renderBlackStone pos_ msgs
 
-            ( Occupied White, _ ) ->
+            ( Just White, _ ) ->
                 renderWhiteStone pos_ msgs
 
-            ( Empty, Just hoveringPos ) ->
+            ( Nothing, Just hoveringPos ) ->
                 if hoveringPos == pos_ then
                     renderStone pos_ currentState.nextPlayer msgs
                 else
                     renderEmptyTile pos_ msgs
 
-            ( Empty, Nothing ) ->
+            ( Nothing, Nothing ) ->
                 renderEmptyTile pos_ msgs
 
 
@@ -115,8 +119,11 @@ tiles game msgs =
 
         currentState =
             Zipper.current game.history
+
+        positions =
+            cartesianProduct (List.range 0 (game.size - 1)) (List.range 0 (game.size - 1))
     in
-        List.map tile_ <| Dict.toList currentState.board
+        List.map tile_ positions
 
 
 board : Int -> { onEnter : Pos -> a, onLeave : a, onClick : Pos -> a } -> Svg a

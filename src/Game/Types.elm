@@ -10,11 +10,6 @@ type Stone
     | White
 
 
-type Point
-    = Empty
-    | Occupied Stone
-
-
 type alias Pos =
     { x : Int
     , y : Int
@@ -22,7 +17,7 @@ type alias Pos =
 
 
 type alias Board =
-    Dict.Dict ( Int, Int ) Point
+    Dict.Dict ( Int, Int ) Stone
 
 
 type alias Player =
