@@ -57,9 +57,12 @@ renderScreen game =
     let
         currentState =
             Zipper.current game.history
+
+        nextPlayer =
+            Game.Util.nextPlayer currentState.board game.handicap
     in
         div []
-            [ span [] [ text ("Current Player: " ++ playerToString currentState.nextPlayer) ]
+            [ span [] [ text ("Current Player: " ++ playerToString nextPlayer) ]
             , span [] [ text ("Komi: " ++ toString game.komi) ]
             , div []
                 [ button

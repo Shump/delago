@@ -39,6 +39,15 @@ stones : Board -> Int
 stones board = Dict.size board
 
 
+nextPlayer : Board -> Int -> Player
+nextPlayer board handicap  =
+    let
+        diff = (stones board) - handicap
+    in
+        if (rem (max diff 0) 2) == 0 then
+            Black
+        else
+            White
 
 
 getPos : ( Int, Int ) -> Pos

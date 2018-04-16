@@ -22,10 +22,11 @@ newGame size komi handicap =
         emptyBoard _ =
             Dict.empty
     in
-        { history = Zipper.singleton <| BoardState (emptyBoard size) Black handicap
+        { history = Zipper.singleton <| BoardState (emptyBoard size)
         , hovering = Nothing
         , komi = komi
         , size = size
+        , handicap = handicap
         }
 
 
@@ -50,24 +51,17 @@ clickTile game pos =
         currentState =
             Zipper.current game.history
 
+        nextPlayer =
+            Game.Util.nextPlayer currentState.board game.handicap
+
         addStone =
             let
                 newBoard =
-                    putPoint pos (currentState.nextPlayer) currentState.board
+                    putPoint pos nextPlayer currentState.board
 
                 newState =
                     { currentState
                         | board = newBoard
-                        , nextPlayer =
-                            if currentState.handicap > 0 then
-                                currentState.nextPlayer
-                            else
-                                flipPlayer currentState.nextPlayer
-                        , handicap =
-                            if currentState.handicap > 0 then
-                                currentState.handicap - 1
-                            else
-                                currentState.handicap
                     }
             in
                 { game | history = next_ <| replaceRight [ newState ] game.history }

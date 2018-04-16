@@ -26,8 +26,6 @@ type alias Player =
 
 type alias BoardState =
     { board : Board
-    , nextPlayer : Player
-    , handicap : Int
     }
 
 
@@ -36,4 +34,5 @@ type alias Game =
     , hovering : Maybe Pos
     , komi : Float
     , size : Int
+    , handicap : Int
     }

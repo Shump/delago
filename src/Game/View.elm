@@ -26,6 +26,7 @@ import Game.Types
         , Stone(..)
         , Player
         )
+import Game.Util
 import Util exposing (cartesianProduct)
 
 
@@ -90,6 +91,9 @@ tile game msgs ( x, y ) =
         currentState =
             Zipper.current game.history
 
+        nextPlayer =
+            Game.Util.nextPlayer currentState.board game.handicap
+
         point =
             Dict.get ( x, y ) currentState.board
 
@@ -103,7 +107,7 @@ tile game msgs ( x, y ) =
 
             ( Nothing, Just hoveringPos ) ->
                 if hoveringPos == pos_ then
-                    renderStone pos_ currentState.nextPlayer msgs
+                    renderStone pos_ nextPlayer msgs
                 else
                     renderEmptyTile pos_ msgs
 
