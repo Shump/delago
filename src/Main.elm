@@ -3,12 +3,15 @@ module Main exposing (..)
 import Html exposing (beginnerProgram, div, span, text, button)
 import Html.Attributes exposing (disabled)
 import Html.Events exposing (onClick)
+import Navigation
 import List
 import Maybe exposing (Maybe(..))
 import Platform exposing (Program)
 
 import List.Zipper as Zipper
+import Url
 
+import Coding
 import Game
 import Game.Types
 import Game.Util exposing (flipPlayer, playerToString)
@@ -35,11 +38,15 @@ createGame setup =
     Maybe.map2 (Game.newGame (Menu.sizeToInt setup.size)) setup.komi setup.okigo
 
 
-newApp : App
-newApp =
-    { setup = Menu.newSetup defaultSetup.size defaultSetup.komi defaultSetup.okigo
-    , game = Game.newGame (Menu.sizeToInt defaultSetup.size) defaultSetup.komi defaultSetup.okigo
-    }
+newApp : Navigation.Location -> ( App, Cmd Msg )
+newApp location =
+    let
+        app =
+            { setup = Menu.newSetup defaultSetup.size defaultSetup.komi defaultSetup.okigo
+            , game = Game.newGame (Menu.sizeToInt defaultSetup.size) defaultSetup.komi defaultSetup.okigo
+            }
+    in
+        ( app, Cmd.none )
 
 
 type Msg
@@ -49,7 +56,8 @@ type Msg
     | Undo
     | Redo
     | UpdateSetup Menu.Setup
-    | NewGame
+    | NewGame Menu.Setup
+    | Noop
 
 
 renderScreen : Game.Types.Game -> Html.Html Msg
@@ -95,35 +103,70 @@ render app =
         ]
 
 
-update : Msg -> App -> App
+stringifyApp : App -> String
+stringifyApp { game, setup } =
+    let
+        url =
+            Url.root
+                |> Url.appendParam "v" ( Url.s <| Coding.encode game Coding.List )
+    in
+        Url.toString game url
+
+
+update : Msg -> App -> ( App, Cmd Msg )
 update msg app =
     case msg of
         OnEnter pos ->
-            { app | game = Game.enterTile app.game pos }
+            ( { app | game = Game.enterTile app.game pos }
+            , Cmd.none
+            )
 
         OnLeave ->
-            { app | game = Game.leaveBoard app.game }
+            ( { app | game = Game.leaveBoard app.game }
+            , Cmd.none
+            )
 
         OnClick pos ->
-            { app | game = Game.clickTile app.game pos }
+            let
+                app_ = { app | game = Game.clickTile app.game pos }
+            in
+                ( app_
+                , Navigation.modifyUrl <| stringifyApp app_
+                )
 
         Undo ->
-            { app | game = Game.undo app.game }
+            ( { app | game = Game.undo app.game }
+            , Cmd.none
+            )
 
         Redo ->
-            { app | game = Game.redo app.game }
+            ( { app | game = Game.redo app.game }
+            , Cmd.none
+            )
 
         UpdateSetup setup ->
-            { app | setup = setup }
+            ( { app | setup = setup }
+            , Cmd.none
+            )
 
-        NewGame ->
-            { app | game = Maybe.withDefault app.game (createGame app.setup) }
+        NewGame setup ->
+            let
+                app_ = { app | game = Maybe.withDefault app.game (createGame setup) }
+            in
+                ( app_
+                , Navigation.modifyUrl <| stringifyApp app_
+                )
+
+        Noop ->
+            ( app, Cmd.none )
 
 
 main : Program Never App Msg
 main =
-    beginnerProgram
-        { model = newApp
+    Navigation.program
+        ( \_ -> Noop )
+        { init = newApp
         , view = render
         , update = update
+        , subscriptions = \_ -> Sub.none
         }

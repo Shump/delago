@@ -97,7 +97,7 @@ radio default setup update value title =
         ]
 
 
-render : DefaultSetup -> Setup -> { update : Setup -> a, newGame : a } -> Html.Html a
+render : DefaultSetup -> Setup -> { update : Setup -> a, newGame : Setup -> a } -> Html.Html a
 render defaults setup msgs =
     let
         radio_ =
@@ -150,7 +150,7 @@ render defaults setup msgs =
                     []
                 ]
             , button
-                [ onClick msgs.newGame
+                [ onClick <| msgs.newGame setup
                 , disabled isSubmitDisabled_
                 ]
                 [ text "New Game" ]
