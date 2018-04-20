@@ -52,12 +52,3 @@ pairs xs =
 
             ( _, _ ) ->
                 []
-
-
-isCycleOf : Float -> Float -> Bool
-isCycleOf value cycle =
-    let
-        cycles =
-            value / cycle
-    in
-        cycles == toFloat (truncate cycles)

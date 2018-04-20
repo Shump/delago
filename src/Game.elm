@@ -16,15 +16,14 @@ putPoint { x, y } stone board =
     Dict.update ( x, y ) ( Maybe.Extra.or <| Just stone ) board
 
 
-newGame : Int -> Float -> Int -> Game
-newGame size komi handicap =
+newGame : Int -> Int -> Game
+newGame size handicap =
     let
         emptyBoard _ =
             Dict.empty
     in
         { history = Zipper.singleton <| emptyBoard size
         , hovering = Nothing
-        , komi = komi
         , size = size
         , handicap = handicap
         }

@@ -27,7 +27,6 @@ type alias Player =
 type alias Game =
     { history : Zipper.Zipper Board
     , hovering : Maybe Pos
-    , komi : Float
     , size : Int
     , handicap : Int
     }

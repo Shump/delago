@@ -129,16 +129,15 @@ listDecoding str =
                 |> Maybe.map3 split size handicap
                 |> Maybe.map3 toBoard handicap size
 
-        game : Float -> Int -> Int -> Game.Types.Board -> Game.Types.Game
-        game komi size handicap board =
+        game : Int -> Int -> Game.Types.Board -> Game.Types.Game
+        game size handicap board =
             { history = Zipper.singleton board
             , hovering = Maybe.Nothing
-            , komi = komi
             , size = size
             , handicap = handicap
             }
     in
-        Maybe.map3 (game 4.5) size handicap board
+        Maybe.map3 game size handicap board
 
 
 decode : Coding -> String -> Maybe Game

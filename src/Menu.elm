@@ -7,8 +7,6 @@ import Maybe exposing (Maybe(..))
 import Result
 import String
 
-import Util exposing (isCycleOf)
-
 
 type BoardSize
     = Nine
@@ -29,32 +27,25 @@ sizeToInt size =
             19
 
 
-type alias Komi =
-    Float
-
-
 type alias Okigo =
     Int
 
 
 type alias Setup =
     { size : BoardSize
-    , komi : Maybe Komi
     , okigo : Maybe Okigo
     }
 
 
 type alias DefaultSetup =
     { size : BoardSize
-    , komi : Komi
     , okigo : Okigo
     }
 
 
-newSetup : BoardSize -> Komi -> Okigo -> Setup
-newSetup size komi okigo =
+newSetup : BoardSize -> Okigo -> Setup
+newSetup size okigo =
     { size = size
-    , komi = Just komi
     , okigo = Just okigo
     }
 
@@ -64,23 +55,18 @@ updateSize setup size =
     { setup | size = size }
 
 
-updateKomi : Setup -> Maybe Komi -> Setup
-updateKomi setup komi =
-    { setup | komi = komi }
-
-
 updateOkigo : Setup -> Maybe Okigo -> Setup
 updateOkigo setup okigo =
     { setup | okigo = okigo }
 
 
 isSetupValid : Setup -> Bool
-isSetupValid { komi, okigo } =
+isSetupValid { okigo } =
     let
-        verify komi_ okigo_ =
-            komi_ >= 0 && isCycleOf komi_ 0.5 && okigo_ >= 0
+        verify okigo_ =
+            okigo_ >= 0
     in
-        Maybe.withDefault False <| Maybe.map2 verify komi okigo
+        Maybe.withDefault False <| Maybe.map verify okigo
 
 
 radio : BoardSize -> Setup -> ( Setup -> a ) -> BoardSize -> String -> Html.Html a
@@ -103,13 +89,6 @@ render defaults setup msgs =
         radio_ =
             radio defaults.size setup msgs.update
 
-        komiUpdate_ =
-            msgs.update << updateKomi setup
-
-        updateKomi_ str =
-            Result.withDefault (komiUpdate_ Nothing) <|
-                Result.map (komiUpdate_ << Just) (String.toFloat str)
-
         okigoUpdate_ =
             msgs.update << updateOkigo setup
 
@@ -126,17 +105,6 @@ render defaults setup msgs =
                 , radio_ Nine "9x9"
                 , radio_ Thirteen "13x13"
                 , radio_ Nineteen "19x19"
-                ]
-            , label []
-                [ text "Komi:"
-                , input
-                    [ type_ "number"
-                    , Attr.min "0.5"
-                    , Attr.step "0.5"
-                    , Attr.defaultValue (toString defaults.komi)
-                    , onInput updateKomi_
-                    ]
-                    []
                 ]
             , label []
                 [ text "Handicap stones:"

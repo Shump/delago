@@ -29,21 +29,20 @@ type alias App =
 defaultSetup : Menu.DefaultSetup
 defaultSetup =
     { size = Menu.Nineteen
-    , komi = 6.5
     , okigo = 0
     }
 
 
 createGame : Menu.Setup -> Maybe Game.Types.Game
 createGame setup =
-    Maybe.map2 (Game.newGame (Menu.sizeToInt setup.size)) setup.komi setup.okigo
+    Maybe.map (Game.newGame (Menu.sizeToInt setup.size)) setup.okigo
 
 
 newApp : Navigation.Location -> ( App, Cmd Msg )
 newApp location =
     let
         newGame =
-            Game.newGame (Menu.sizeToInt defaultSetup.size) defaultSetup.komi defaultSetup.okigo
+            Game.newGame (Menu.sizeToInt defaultSetup.size) defaultSetup.okigo
 
         game =
             UrlParser.parseHash UrlParser.string location
@@ -51,7 +50,7 @@ newApp location =
                 |> Maybe.withDefault newGame
 
         app =
-            { setup = Menu.newSetup defaultSetup.size defaultSetup.komi defaultSetup.okigo
+            { setup = Menu.newSetup defaultSetup.size defaultSetup.okigo
             , game = game
             }
     in
@@ -80,7 +79,6 @@ renderScreen game =
     in
         div []
             [ span [] [ text ("Current Player: " ++ playerToString nextPlayer) ]
-            , span [] [ text ("Komi: " ++ toString game.komi) ]
             , div []
                 [ button
                     [ onClick Undo
