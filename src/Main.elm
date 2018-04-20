@@ -10,6 +10,7 @@ import Platform exposing (Program)
 
 import List.Zipper as Zipper
 import Url
+import UrlParser
 
 import Coding
 import Game
@@ -41,9 +42,17 @@ createGame setup =
 newApp : Navigation.Location -> ( App, Cmd Msg )
 newApp location =
     let
+        newGame =
+            Game.newGame (Menu.sizeToInt defaultSetup.size) defaultSetup.komi defaultSetup.okigo
+
+        game =
+            UrlParser.parseHash UrlParser.string location
+                |> Maybe.andThen (Coding.decode Coding.List)
+                |> Maybe.withDefault newGame
+
         app =
             { setup = Menu.newSetup defaultSetup.size defaultSetup.komi defaultSetup.okigo
-            , game = Game.newGame (Menu.sizeToInt defaultSetup.size) defaultSetup.komi defaultSetup.okigo
+            , game = game
             }
     in
         ( app, Cmd.none )
@@ -108,7 +117,8 @@ stringifyApp { game, setup } =
     let
         url =
             Url.root
-                |> Url.appendParam "v" ( Url.s <| Coding.encode game Coding.List )
+                |> Url.append Url.hash
+                |> Url.append ( Url.s <| Coding.encode game Coding.List )
     in
         Url.toString game url
 

@@ -37,6 +37,23 @@ any bs =
     List.foldr (||) False bs
 
 
+pairs : List a -> List ( a, a )
+pairs xs =
+    let
+        maybeFirst = List.head xs
+
+        tail = List.drop 1 xs
+
+        maybeSecond = List.head tail
+    in
+        case ( maybeFirst, maybeSecond ) of
+            ( Just a, Just b ) ->
+                ( a, b ) :: (pairs <| List.drop 1 tail)
+
+            ( _, _ ) ->
+                []
+
+
 isCycleOf : Float -> Float -> Bool
 isCycleOf value cycle =
     let
