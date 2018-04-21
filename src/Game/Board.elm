@@ -7,6 +7,10 @@ module Game.Board
         , getPoint
         , stonesCount
         , stones
+        , blackStonesCount
+        , blackStones
+        , whiteStonesCount
+        , whiteStones
         )
 
 import Dict
@@ -51,3 +55,23 @@ stonesCount (Board board) =
 stones : Board -> List ( ( Int, Int ), Stone )
 stones (Board board) =
     Dict.toList board
+
+
+blackStonesCount : Board -> Int
+blackStonesCount (Board board) =
+    Dict.foldl (\_ stone count -> if isBlack stone then count + 1 else count) 0 board
+
+
+blackStones : Board -> List ( (Int, Int ), Stone )
+blackStones (Board board) =
+    Dict.foldl (\pos stone list -> if isBlack stone then ( pos, stone ) :: list else list) [] board
+
+
+whiteStonesCount : Board -> Int
+whiteStonesCount (Board board) =
+    Dict.foldl (\_ stone count -> if isWhite stone then count + 1 else count) 0 board
+
+
+whiteStones : Board -> List ( (Int, Int ), Stone )
+whiteStones (Board board) =
+    Dict.foldl (\pos stone list -> if isWhite stone then ( pos, stone ) :: list else list) [] board
