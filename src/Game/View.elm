@@ -1,6 +1,5 @@
 module Game.View exposing (renderBoard)
 
-import Dict
 import Html
 import List
 import Maybe
@@ -95,7 +94,7 @@ tile game msgs ( x, y ) =
             Game.Util.nextPlayer currentBoard game.handicap
 
         point =
-            Dict.get ( x, y ) currentBoard
+            Game.Types.getPoint currentBoard pos_
 
     in
         case ( point, game.hovering ) of

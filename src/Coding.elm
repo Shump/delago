@@ -45,7 +45,7 @@ listEncoding game =
             ( String.fromChar <| encodeCoor x ) ++ ( String.fromChar <| encodeCoor y )
 
         encodedBoard =
-            Dict.toList currentBoard
+            Game.Types.stones currentBoard
                 |> List.partition isBlack
                 |> uncurry List.append
                 |> List.map (Tuple.first >> encodePos)
@@ -113,11 +113,11 @@ listDecoding str =
         toBoard : Int -> Int -> ( List Pos, List Pos ) -> Game.Types.Board
         toBoard handicap size (bs, ws) =
             let
-                insert stone pos board =
-                    Dict.insert pos stone board
+                insert stone ( x, y ) board =
+                    Game.Types.putPoint (Game.Types.Pos x y) stone board
 
                 blackAdded =
-                    List.foldl (insert Game.Types.Black) Dict.empty bs
+                    List.foldl (insert Game.Types.Black) (Game.Types.newBoard size) bs
             in
                 List.foldl (insert Game.Types.White) blackAdded ws
 

@@ -1,26 +1,19 @@
 module Game exposing (..)
 
-import Dict
 import Maybe exposing (Maybe)
 
 import List.Zipper as Zipper
-import Maybe.Extra
 
 import Game.Types exposing (..)
 import Game.Util exposing (flipStone, flipPlayer)
 import List.Zipper.Extra exposing (previous_, next_, replaceRight, next_)
 
 
-putPoint : Pos -> Stone -> Board -> Board
-putPoint { x, y } stone board =
-    Dict.update ( x, y ) ( Maybe.Extra.or <| Just stone ) board
-
-
 newGame : Int -> Int -> Game
 newGame size handicap =
     let
-        emptyBoard _ =
-            Dict.empty
+        emptyBoard size =
+            Game.Types.newBoard size
     in
         { history = Zipper.singleton <| emptyBoard size
         , hovering = Nothing
@@ -56,14 +49,14 @@ clickTile game pos =
         addStone =
             let
                 newBoard =
-                    putPoint pos nextPlayer currentBoard
+                    Game.Types.putPoint pos nextPlayer currentBoard
             in
                 { game | history = next_ <| replaceRight [ newBoard ] game.history }
 
         removeStone =
             let
                 newBoard =
-                    Dict.remove ( pos.x, pos.y ) currentBoard
+                    Game.Types.removePoint pos currentBoard
             in
                 { game | history = next_ <| replaceRight [ newBoard ] game.history }
 
@@ -76,7 +69,7 @@ clickTile game pos =
                     removeStone
 
         maybePoint =
-            Dict.get ( pos.x, pos.y ) currentBoard
+            Game.Types.getPoint currentBoard pos
     in
         updatePoint maybePoint
 
