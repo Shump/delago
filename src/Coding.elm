@@ -11,7 +11,9 @@ import List.Extra
 import List.Zipper as Zipper
 import Maybe.Extra
 
-import Game.Types exposing (Game)
+import Game.Board
+import Game.Game exposing (Game)
+import Game.Types
 import Util
 
 type Coding
@@ -45,7 +47,7 @@ listEncoding game =
             ( String.fromChar <| encodeCoor x ) ++ ( String.fromChar <| encodeCoor y )
 
         encodedBoard =
-            Game.Types.stones currentBoard
+            Game.Board.stones currentBoard
                 |> List.partition isBlack
                 |> uncurry List.append
                 |> List.map (Tuple.first >> encodePos)
@@ -110,18 +112,18 @@ listDecoding str =
             in
                 List.Extra.splitAt blackStones positions
 
-        toBoard : Int -> Int -> ( List Pos, List Pos ) -> Game.Types.Board
+        toBoard : Int -> Int -> ( List Pos, List Pos ) -> Game.Board.Board
         toBoard handicap size (bs, ws) =
             let
                 insert stone ( x, y ) board =
-                    Game.Types.putPoint (Game.Types.Pos x y) stone board
+                    Game.Board.putPoint (Game.Types.Pos x y) stone board
 
                 blackAdded =
-                    List.foldl (insert Game.Types.Black) (Game.Types.newBoard size) bs
+                    List.foldl (insert Game.Types.Black) (Game.Board.newBoard size) bs
             in
                 List.foldl (insert Game.Types.White) blackAdded ws
 
-        board : Maybe Game.Types.Board
+        board : Maybe Game.Board.Board
         board =
             String.toList boardString
                 |> Maybe.Extra.traverse charToCoor
@@ -129,7 +131,7 @@ listDecoding str =
                 |> Maybe.map3 split size handicap
                 |> Maybe.map3 toBoard handicap size
 
-        game : Int -> Int -> Game.Types.Board -> Game.Types.Game
+        game : Int -> Int -> Game.Board.Board -> Game
         game size handicap board =
             { history = Zipper.singleton board
             , hovering = Maybe.Nothing

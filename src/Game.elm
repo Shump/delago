@@ -4,6 +4,8 @@ import Maybe exposing (Maybe)
 
 import List.Zipper as Zipper
 
+import Game.Board
+import Game.Game exposing (Game)
 import Game.Types exposing (..)
 import Game.Util exposing (flipStone, flipPlayer)
 import List.Zipper.Extra exposing (previous_, next_, replaceRight, next_)
@@ -13,7 +15,7 @@ newGame : Int -> Int -> Game
 newGame size handicap =
     let
         emptyBoard size =
-            Game.Types.newBoard size
+            Game.Board.newBoard size
     in
         { history = Zipper.singleton <| emptyBoard size
         , hovering = Nothing
@@ -49,14 +51,14 @@ clickTile game pos =
         addStone =
             let
                 newBoard =
-                    Game.Types.putPoint pos nextPlayer currentBoard
+                    Game.Board.putPoint pos nextPlayer currentBoard
             in
                 { game | history = next_ <| replaceRight [ newBoard ] game.history }
 
         removeStone =
             let
                 newBoard =
-                    Game.Types.removePoint pos currentBoard
+                    Game.Board.removePoint pos currentBoard
             in
                 { game | history = next_ <| replaceRight [ newBoard ] game.history }
 
@@ -69,7 +71,7 @@ clickTile game pos =
                     removeStone
 
         maybePoint =
-            Game.Types.getPoint currentBoard pos
+            Game.Board.getPoint currentBoard pos
     in
         updatePoint maybePoint
 

@@ -2,6 +2,7 @@ module Game.Util exposing (..)
 
 import Dict
 
+import Game.Board exposing (Board, stonesCount)
 import Game.Types exposing (..)
 
 

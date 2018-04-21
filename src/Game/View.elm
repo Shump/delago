@@ -18,10 +18,11 @@ import Game.SvgDefs
         , height_
         , boardSymbol
         )
+import Game.Board
+import Game.Game exposing (Game)
 import Game.Types
     exposing
-        ( Game
-        , Pos
+        ( Pos
         , Stone(..)
         , Player
         )
@@ -94,7 +95,7 @@ tile game msgs ( x, y ) =
             Game.Util.nextPlayer currentBoard game.handicap
 
         point =
-            Game.Types.getPoint currentBoard pos_
+            Game.Board.getPoint currentBoard pos_
 
     in
         case ( point, game.hovering ) of
@@ -114,7 +115,7 @@ tile game msgs ( x, y ) =
                 renderEmptyTile pos_ msgs
 
 
-tiles : Game.Types.Game -> { onEnter : Pos -> a, onLeave : a, onClick : Pos -> a } -> List (Svg a)
+tiles : Game -> { onEnter : Pos -> a, onLeave : a, onClick : Pos -> a } -> List (Svg a)
 tiles game msgs =
     let
         tile_ =
@@ -139,7 +140,7 @@ board size msgs =
         []
 
 
-renderBoard : Game.Types.Game -> { onEnter : Pos -> a, onLeave : a, onClick : Pos -> a } -> Html.Html a
+renderBoard : Game -> { onEnter : Pos -> a, onLeave : a, onClick : Pos -> a } -> Html.Html a
 renderBoard game a =
     let
         attributes =

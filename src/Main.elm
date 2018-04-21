@@ -14,6 +14,7 @@ import UrlParser
 
 import Coding
 import Game
+import Game.Game exposing (Game)
 import Game.Types
 import Game.Util exposing (flipPlayer, playerToString)
 import Game.View exposing (renderBoard)
@@ -22,7 +23,7 @@ import Menu
 
 type alias App =
     { setup : Menu.Setup
-    , game : Game.Types.Game
+    , game : Game
     }
 
 
@@ -33,7 +34,7 @@ defaultSetup =
     }
 
 
-createGame : Menu.Setup -> Maybe Game.Types.Game
+createGame : Menu.Setup -> Maybe Game
 createGame setup =
     Maybe.map (Game.newGame (Menu.sizeToInt setup.size)) setup.okigo
 
@@ -68,7 +69,7 @@ type Msg
     | Noop
 
 
-renderScreen : Game.Types.Game -> Html.Html Msg
+renderScreen : Game -> Html.Html Msg
 renderScreen game =
     let
         currentBoard =
