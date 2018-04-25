@@ -52,8 +52,23 @@ putPoint { x, y } stone (Board repr) =
 
 
 removePoint : Pos -> Board -> Board
-removePoint { x, y } (Board repr) =
-    Board { repr | board = Dict.remove ( x, y ) repr.board }
+removePoint { x, y } ((Board repr) as board) =
+    let
+        take repr stone =
+            if stone == Black then
+                { repr |
+                    board = Dict.remove ( x, y ) repr.board,
+                    blackTaken = repr.blackTaken + 1
+                }
+            else
+                { repr |
+                    board = Dict.remove ( x, y ) repr.board,
+                    whiteTaken = repr.whiteTaken + 1
+                }
+    in
+        Dict.get ( x, y ) repr.board
+            |> Maybe.map (Board << (take repr))
+            |> Maybe.withDefault board
 
 
 getPoint : Board -> Pos -> Maybe Stone
