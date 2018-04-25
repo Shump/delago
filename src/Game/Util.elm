@@ -37,7 +37,11 @@ playerToString =
 nextPlayer : Board -> Int -> Player
 nextPlayer board handicap  =
     let
-        diff = (stonesCount board) - handicap
+        diff =
+            (stonesCount board)
+            + (Game.Board.blackTaken board)
+            + (Game.Board.whiteTaken board)
+            - handicap
     in
         if (rem (max diff 0) 2) == 0 then
             Black

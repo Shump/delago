@@ -11,6 +11,9 @@ module Game.Board
         , blackStones
         , whiteStonesCount
         , whiteStones
+        , taken
+        , blackTaken
+        , whiteTaken
         )
 
 import Dict
@@ -24,54 +27,83 @@ import Game.Types exposing (..)
 type alias Size = Int
 
 
-type Board = Board (Dict.Dict ( Int, Int ) Stone)
+type alias Repr =
+    { board : Dict.Dict ( Int, Int ) Stone
+    , blackTaken : Int
+    , whiteTaken : Int
+    }
+
+
+type Board = Board Repr
 
 
 newBoard : Size -> Board
 newBoard _ =
-    Board <| Dict.empty
+    Board
+        { board = Dict.empty
+        , blackTaken = 0
+        , whiteTaken = 0
+        }
 
 
 putPoint : Pos -> Stone -> Board -> Board
-putPoint { x, y } stone (Board board) =
-    Board <| Dict.update ( x, y ) ( Maybe.Extra.or <| Just stone ) board
+putPoint { x, y } stone (Board repr) =
+    Board { repr | board = Dict.update ( x, y ) ( Maybe.Extra.or <| Just stone ) repr.board }
 
 
 removePoint : Pos -> Board -> Board
-removePoint { x, y } (Board board) =
-    Board <| Dict.remove ( x, y ) board
+removePoint { x, y } (Board repr) =
+    Board { repr | board = Dict.remove ( x, y ) repr.board }
 
 
 getPoint : Board -> Pos -> Maybe Stone
-getPoint (Board board) { x, y } =
-    Dict.get ( x, y ) board
+getPoint (Board repr) { x, y } =
+    Dict.get ( x, y ) repr.board
 
 
 stonesCount : Board -> Int
-stonesCount (Board board) =
-    Dict.size board
+stonesCount (Board repr) =
+    Dict.size repr.board
 
 
 stones : Board -> List ( ( Int, Int ), Stone )
-stones (Board board) =
-    Dict.toList board
+stones (Board repr) =
+    Dict.toList repr.board
 
 
 blackStonesCount : Board -> Int
-blackStonesCount (Board board) =
-    Dict.foldl (\_ stone count -> if isBlack stone then count + 1 else count) 0 board
+blackStonesCount (Board repr) =
+    Dict.foldl (\_ stone count -> if isBlack stone then count + 1 else count) 0 repr.board
 
 
 blackStones : Board -> List ( (Int, Int ), Stone )
-blackStones (Board board) =
-    Dict.foldl (\pos stone list -> if isBlack stone then ( pos, stone ) :: list else list) [] board
+blackStones (Board repr) =
+    Dict.foldl (\pos stone list -> if isBlack stone then ( pos, stone ) :: list else list) [] repr.board
 
 
 whiteStonesCount : Board -> Int
-whiteStonesCount (Board board) =
-    Dict.foldl (\_ stone count -> if isWhite stone then count + 1 else count) 0 board
+whiteStonesCount (Board repr) =
+    Dict.foldl (\_ stone count -> if isWhite stone then count + 1 else count) 0 repr.board
 
 
 whiteStones : Board -> List ( (Int, Int ), Stone )
-whiteStones (Board board) =
-    Dict.foldl (\pos stone list -> if isWhite stone then ( pos, stone ) :: list else list) [] board
+whiteStones (Board repr) =
+    Dict.foldl (\pos stone list -> if isWhite stone then ( pos, stone ) :: list else list) [] repr.board
+
+
+taken : Stone -> Board -> Int
+taken stone (Board repr) =
+    if stone == Black then
+        repr.blackTaken
+    else
+        repr.whiteTaken
+
+
+blackTaken : Board -> Int
+blackTaken (Board repr) =
+    repr.blackTaken
+
+
+whiteTaken : Board -> Int
+whiteTaken (Board repr) =
+    repr.whiteTaken
