@@ -14,6 +14,7 @@ import UrlParser
 
 import Coding
 import Game
+import Game.Board
 import Game.Game exposing (Game)
 import Game.Types
 import Game.Util exposing (flipPlayer, playerToString)
@@ -97,18 +98,26 @@ renderScreen game =
 
 render : App -> Html.Html Msg
 render app =
-    Html.div []
-        [ renderBoard app.game
-            { onEnter = OnEnter
-            , onLeave = OnLeave
-            , onClick = OnClick
-            }
-        , Menu.render defaultSetup app.setup
-            { update = UpdateSetup
-            , newGame = NewGame
-            }
-        , renderScreen app.game
-        ]
+    let
+        currentBoard =
+            Zipper.current app.game.history
+    in
+        Html.div []
+            [ div []
+                [ span [] [ text ("Black taken: " ++ toString (Game.Board.blackTaken currentBoard)) ]
+                , span [] [ text ("White taken: " ++ toString (Game.Board.whiteTaken currentBoard)) ]
+                ]
+            , renderBoard app.game
+                { onEnter = OnEnter
+                , onLeave = OnLeave
+                , onClick = OnClick
+                }
+            , Menu.render defaultSetup app.setup
+                { update = UpdateSetup
+                , newGame = NewGame
+                }
+            , renderScreen app.game
+            ]
 
 
 stringifyApp : App -> String
