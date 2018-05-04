@@ -50,11 +50,6 @@ newSetup size okigo =
     }
 
 
-updateSize : Setup -> BoardSize -> Setup
-updateSize setup size =
-    { setup | size = size }
-
-
 updateOkigo : Setup -> Maybe Okigo -> Setup
 updateOkigo setup okigo =
     { setup | okigo = okigo }
