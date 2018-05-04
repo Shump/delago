@@ -52,11 +52,7 @@ newSetup size okigo =
 
 isSetupValid : Setup -> Bool
 isSetupValid { okigo } =
-    let
-        verify okigo_ =
-            okigo_ >= 0
-    in
-        Maybe.withDefault False <| Maybe.map verify okigo
+    Maybe.withDefault False <| Maybe.map (\o -> o >= 0) okigo
 
 
 type Style
