@@ -93,9 +93,6 @@ render setup msgs =
                         ]
                     }
 
-        updateOkigo_ str =
-            msgs.update { setup | okigo = Result.toMaybe (String.toInt str) }
-
         okigo =
             Element.row NoStyle []
                 [ Element.text "Handicap stones:"
@@ -104,7 +101,8 @@ render setup msgs =
                     , Attributes.attribute "min" "0"
                     , Attributes.attribute "step" "1"
                     , Attributes.attribute "value" (toString <| Maybe.withDefault 0 setup.okigo)
-                    , Events.onInput updateOkigo_
+                    , Events.onInput <| \str ->
+                        msgs.update { setup | okigo = Result.toMaybe (String.toInt str) }
                     ]
                     (Element.text "test")
                 ]
