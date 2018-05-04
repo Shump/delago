@@ -50,11 +50,6 @@ newSetup size okigo =
     }
 
 
-updateOkigo : Setup -> Maybe Okigo -> Setup
-updateOkigo setup okigo =
-    { setup | okigo = okigo }
-
-
 isSetupValid : Setup -> Bool
 isSetupValid { okigo } =
     let
@@ -84,12 +79,9 @@ render defaults setup msgs =
         radio_ =
             radio defaults.size setup msgs.update
 
-        okigoUpdate_ =
-            msgs.update << updateOkigo setup
 
         updateOkigo_ str =
-            Result.withDefault (okigoUpdate_ Nothing) <|
-                Result.map (okigoUpdate_ << Just) (String.toInt str)
+            msgs.update { setup | okigo = Result.toMaybe (String.toInt str) }
 
         isSubmitDisabled_ =
             not <| isSetupValid setup
