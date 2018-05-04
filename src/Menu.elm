@@ -70,31 +70,29 @@ stylesheet =
         ]
 
 
-radio : Setup -> ( Setup -> a ) -> Element.Element Style var a
-radio setup update =
-    let
-        choice value =
-            let
-                size = toString (sizeToInt value)
-            in
-                Input.choice value (Element.text <| size ++ "x" ++ size)
-    in
-        Input.radioRow NoStyle []
-            { onChange = (\value -> (update { setup | size = value }))
-            , selected = Just setup.size
-            , label = Input.labelLeft (Element.text "Board Size:")
-            , options = []
-            , choices =
-                [ choice Nine
-                , choice Thirteen
-                , choice Nineteen
-                ]
-            }
-
-
 render : Setup -> { update : Setup -> a, newGame : Setup -> a } -> Html.Html a
 render setup msgs =
     let
+        radio setup update =
+            let
+                choice value =
+                    let
+                        size = toString (sizeToInt value)
+                    in
+                        Input.choice value (Element.text <| size ++ "x" ++ size)
+            in
+                Input.radioRow NoStyle []
+                    { onChange = (\value -> (update { setup | size = value }))
+                    , selected = Just setup.size
+                    , label = Input.labelLeft (Element.text "Board Size:")
+                    , options = []
+                    , choices =
+                        [ choice Nine
+                        , choice Thirteen
+                        , choice Nineteen
+                        ]
+                    }
+
         updateOkigo_ str =
             msgs.update { setup | okigo = Result.toMaybe (String.toInt str) }
 
