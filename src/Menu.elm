@@ -60,13 +60,13 @@ isSetupValid { okigo } =
 
 
 type Style
-    = Field
+    = NoStyle
 
 
 stylesheet : Style.StyleSheet Style variation
 stylesheet =
     Style.styleSheet
-        [ Style.style Field []
+        [ Style.style NoStyle []
         ]
 
 
@@ -79,7 +79,7 @@ radio setup update =
             in
                 Input.choice value (Element.text <| size ++ "x" ++ size)
     in
-        Input.radioRow Field []
+        Input.radioRow NoStyle []
             { onChange = (\value -> (update { setup | size = value }))
             , selected = Just setup.size
             , label = Input.labelLeft (Element.text "Board Size:")
@@ -99,9 +99,9 @@ render setup msgs =
             msgs.update { setup | okigo = Result.toMaybe (String.toInt str) }
 
         okigo =
-            Element.row Field []
+            Element.row NoStyle []
                 [ Element.text "Handicap stones:"
-                , Element.node "input" <| Element.el Field
+                , Element.node "input" <| Element.el NoStyle
                     [ Attributes.attribute "type" "number"
                     , Attributes.attribute "min" "0"
                     , Attributes.attribute "step" "1"
@@ -119,7 +119,7 @@ render setup msgs =
                 [ Html.text "New Game" ]
     in
         Element.layout stylesheet <|
-            Element.column Field []
+            Element.column NoStyle []
             [ radio setup msgs.update
             , okigo
             , submit
