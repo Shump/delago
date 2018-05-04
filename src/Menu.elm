@@ -1,11 +1,17 @@
 module Menu exposing (..)
 
-import Html exposing (div, fieldset, label, text, input, button)
-import Html.Attributes as Attr exposing (type_, name, checked, disabled)
-import Html.Events exposing (onClick, onInput)
+import Html
+import Html.Attributes
+import Html.Events
 import Maybe exposing (Maybe(..))
 import Result
 import String
+
+import Element
+import Element.Input as Input
+import Element.Attributes as Attributes
+import Element.Events as Events
+import Style
 
 
 type BoardSize
@@ -37,12 +43,6 @@ type alias Setup =
     }
 
 
-type alias DefaultSetup =
-    { size : BoardSize
-    , okigo : Okigo
-    }
-
-
 newSetup : BoardSize -> Okigo -> Setup
 newSetup size okigo =
     { size = size
@@ -59,54 +59,68 @@ isSetupValid { okigo } =
         Maybe.withDefault False <| Maybe.map verify okigo
 
 
-radio : BoardSize -> Setup -> ( Setup -> a ) -> BoardSize -> String -> Html.Html a
-radio default setup update value title =
-    label []
-        [ input
-            [ type_ "radio"
-            , name "board-size"
-            , onClick (update { setup | size = value })
-            , checked (default == value)
-            ]
-            []
-        , text title
+type Style
+    = Field
+
+
+stylesheet : Style.StyleSheet Style variation
+stylesheet =
+    Style.styleSheet
+        [ Style.style Field []
         ]
 
 
-render : DefaultSetup -> Setup -> { update : Setup -> a, newGame : Setup -> a } -> Html.Html a
-render defaults setup msgs =
+radio : Setup -> ( Setup -> a ) -> Element.Element Style var a
+radio setup update =
     let
-        radio_ =
-            radio defaults.size setup msgs.update
+        choice value =
+            let
+                size = toString (sizeToInt value)
+            in
+                Input.choice value (Element.text <| size ++ "x" ++ size)
+    in
+        Input.radioRow Field []
+            { onChange = (\value -> (update { setup | size = value }))
+            , selected = Just setup.size
+            , label = Input.labelLeft (Element.text "Board Size:")
+            , options = []
+            , choices =
+                [ choice Nine
+                , choice Thirteen
+                , choice Nineteen
+                ]
+            }
 
 
+render : Setup -> { update : Setup -> a, newGame : Setup -> a } -> Html.Html a
+render setup msgs =
+    let
         updateOkigo_ str =
             msgs.update { setup | okigo = Result.toMaybe (String.toInt str) }
 
-        isSubmitDisabled_ =
-            not <| isSetupValid setup
-    in
-        div []
-            [ fieldset []
-                [ label [] [ text "Board size:" ]
-                , radio_ Nine "9x9"
-                , radio_ Thirteen "13x13"
-                , radio_ Nineteen "19x19"
-                ]
-            , label []
-                [ text "Handicap stones:"
-                , input
-                    [ type_ "number"
-                    , Attr.min "0"
-                    , Attr.step "1"
-                    , Attr.defaultValue (toString defaults.okigo)
-                    , onInput updateOkigo_
+        okigo =
+            Element.row Field []
+                [ Element.text "Handicap stones:"
+                , Element.node "input" <| Element.el Field
+                    [ Attributes.attribute "type" "number"
+                    , Attributes.attribute "min" "0"
+                    , Attributes.attribute "step" "1"
+                    , Attributes.attribute "value" (toString <| Maybe.withDefault 0 setup.okigo)
+                    , Events.onInput updateOkigo_
                     ]
-                    []
+                    (Element.text "test")
                 ]
-            , button
-                [ onClick <| msgs.newGame setup
-                , disabled isSubmitDisabled_
+
+        submit =
+            Element.html <| Html.button
+                [ Html.Events.onClick <| msgs.newGame setup
+                , Html.Attributes.disabled <| not (isSetupValid setup)
                 ]
-                [ text "New Game" ]
+                [ Html.text "New Game" ]
+    in
+        Element.layout stylesheet <|
+            Element.column Field []
+            [ radio setup msgs.update
+            , okigo
+            , submit
             ]
